@@ -12,6 +12,8 @@
     "start": "./node_modules/.bin/webpack-dev-server --open"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.7.1",
+    "html-loader": "^0.5.5",
     "react": "^16.11.0",
     "react-dom": "^16.11.0"
   },
