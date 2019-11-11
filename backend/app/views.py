@@ -10,7 +10,7 @@ def index():
 @app.route('/api/<user>/files')
 def list_files(user):
     # TODO Get files of the user
-    return jsonify({files: [{
+    return jsonify({'files': [{
         'path': 'folder/example.png',
         'sha1_hash': '43A025512880D4A84012721C4DD82B736988C07D'
     }]})
