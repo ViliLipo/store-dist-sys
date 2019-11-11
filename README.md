@@ -1,5 +1,5 @@
 # store-dist-sys
-Online store application for Distributed Systems 2019
+Online file storage application for Distributed Systems 2019
 
 
 ## Backend
