@@ -61,12 +61,5 @@ class StoredFile(db.Model):
                 "modified": self.modified,
                 "sha1_hash": self.sha1_hash,
                 "owner": self.ownerEmail,
+                "id": self.id
                 }
-
-
-
-
-
-
-
-
