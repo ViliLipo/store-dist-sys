@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Files from './Files';
+import { connect } from 'react-redux';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
-import api from './../api';
+import Files from 'components/structures/Files';
+import LoginPage from 'components/pages/LoginPage';
+import HomePage from 'components/pages/HomePage';
 
-function App() {
+import { addAuthorization, removeAuthorization } from 'core/redux/actions';
+import api from 'core/api';
+
+function App(props) {
     const [files, setFiles] = useState([]);
 
     useEffect(() => {
@@ -13,21 +19,44 @@ function App() {
     }, []);
 
     const uploadFile = () => {
-        api.files.uploadFile('user', 'file').then(resp => {
-            console.log('POST', resp);
+        api.files.uploadFile('user', 'file').then(response => {
+            // TODO: Update when backend is ready.
+            console.log(response);
         })
     }
 
     return (
-        <div>
-            Distributed Systems 2019
-            <table>
-                <Files files={files} />
-            </table>
-            <button onClick={() => uploadFile()}>Upload</button>
-        </div>
+        <Switch>
+            <Route path='/home' render={({location}) => (
+                props.isAuthorized
+                    ? <HomePage
+                        files={ files }
+                        uploadFile={ uploadFile }
+                        logout={ props.removeAuthorization }
+                    />
+                    : <Redirect to={{
+                        pathname: '/',
+                        state: { from: location }
+                    }} />
+            ) }/>
+            <Route path='/' render={({history}) => (
+                <LoginPage history={ history } login={ props.addAuthorization } />
+            ) } />
+        </Switch>
     );
 };
 
-export default App;
+const mapStateToProps = state => {
+    return {
+        isAuthorized: state.auth.isAuthorized
+    }
+};
+
+export default connect(
+    mapStateToProps,
+    {
+        addAuthorization,
+        removeAuthorization
+    }
+)(App);
 
