@@ -29,8 +29,9 @@ def list_files(user):
     )
 
 
-@app.route("/api/<user>/files/<path:file_path>")
-def download_file(user, file_path):
+@app.route("/api/<user>/files/<id>")
+def download_file(user, id):
+    file_path = None # TODO get Path from database
     # TODO Set UPLOAD_FOLDER and add user specific stuff
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"])
     return send_from_directory(directory=uploads, filename=file_path)
@@ -39,4 +40,11 @@ def download_file(user, file_path):
 @app.route("/api/<user>/files", methods=["POST"])
 def upload_file(user):
     # TODO get the file from the post request
+    return jsonify({"success": True})
+
+
+@app.route("/api/<user>/files/<id>", methods=["DELETE"])
+def delete_file(user, id):
+    file_path = None # TODO get Path from database
+    # TODO delete teh file
     return jsonify({"success": True})
