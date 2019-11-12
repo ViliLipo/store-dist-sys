@@ -11,10 +11,8 @@ def index():
 
 @app.route("/api/<user>/files")
 def list_files(user):
-    # TODO Get files of the user
-    files = StoredFile.query.filter(StoredFile.owner == user)\
-            .order_by(StoredFile.created.desc())
-    fileDicts = map(lambda f: f.toDict(), files)
+    files = StoredFile.query.filter(StoredFile.ownerId == user).all()
+    fileDicts = list(map(lambda f: f.toDict(), files))
     return jsonify(fileDicts)
 
 
