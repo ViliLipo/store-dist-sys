@@ -1,5 +1,6 @@
 from app import app
-from flask import jsonify
+from flask import jsonify, send_from_directory
+import os
 
 
 @app.route("/")
@@ -32,7 +33,7 @@ def list_files(user):
 def download_file(user, file_path):
     # TODO Set UPLOAD_FOLDER and add user specific stuff
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"])
-    return send_from_directory(directory=uploads, filename=filename)
+    return send_from_directory(directory=uploads, filename=file_path)
 
 
 @app.route("/api/<user>/files", methods=["POST"])
