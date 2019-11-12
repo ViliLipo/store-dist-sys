@@ -48,3 +48,9 @@ def delete_file(user, id):
     file_path = None # TODO get Path from database
     # TODO delete teh file
     return jsonify({"success": True})
+
+
+@app.route("/api/<user>/file/<id>", methods=["PUT"])
+def rename_file(user, id):
+    # TODO get the new name from the request
+    return jsonify({"success": True})
