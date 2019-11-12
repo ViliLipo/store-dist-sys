@@ -51,3 +51,20 @@ class StoredFile(db.Model):
         self.name = name
         self.sha1_hash = sha1_hash
 
+    def toDict(self):
+        return {
+                "name": self.name,
+                "path": self.path,
+                "created": self.created,
+                "modified": self.modified,
+                "sha1_hash": self.sha1_hash,
+                "owner": self.ownerEmail,
+                }
+
+
+
+
+
+
+
+
