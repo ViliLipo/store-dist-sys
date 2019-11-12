@@ -22,8 +22,10 @@ def delete_user():
 
 @app.route("/api/auth/login", methods=["POST"])
 def login():
-    response = jsonify({"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
-    response.set_cookie("access_token", "xxxxx.yyyyy.zzzzz") # TODO Generate access token
+    response = jsonify(
+        {"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
+    # TODO Generate access token
+    response.set_cookie("access_token", "xxxxx.yyyyy.zzzzz")
     return response
 
 
@@ -58,25 +60,34 @@ def list_files(user):
 @app.route("/api/<user>/files/<id>")
 def download_file(user, id):
     file_path = None  # TODO get Path from database
-    # TODO Set UPLOAD_FOLDER and add user specific stuff
-    uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"])
+    uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], user)
     return send_from_directory(directory=uploads, filename=file_path)
 
 
 @app.route("/api/<user>/files", methods=["POST"])
 def upload_file(user):
-    # TODO get the file from the post request
-    return jsonify({"success": True})
+    uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], user)
+    file = None
+    try:
+        file = request.files['file']
+        if file:
+            filename = file.filename
+            # TODO Add file to database
+            file.save(uploads, filename)
+
+        return jsonify({"success": True})
+    except error:
+        return jsonify({"success": False, "error": error})
 
 
-@app.route("/api/<user>/files/<id>", methods=["DELETE"])
+@app.route("/api/<user>/files/<id>", methods = ["DELETE"])
 def delete_file(user, id):
-    file_path = None  # TODO get Path from database
+    file_path=None  # TODO get Path from database
     # TODO delete teh file
     return jsonify({"success": True})
 
 
-@app.route("/api/<user>/files/<id>", methods=["PUT"])
+@app.route("/api/<user>/files/<id>", methods = ["PUT"])
 def rename_file(user, id):
     # TODO get the new name from the request
     return jsonify({"success": True})
