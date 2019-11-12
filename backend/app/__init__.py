@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -34,3 +35,6 @@ except:
     print("rollback")
     db.session.rollback()
     db.engine.dispose()
+
+login_manager = LoginManager()
+login_manager.init_app(app)
