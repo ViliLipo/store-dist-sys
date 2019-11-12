@@ -8,6 +8,32 @@ def index():
     return jsonify({"json": True})
 
 
+@app.route("/api/user", methods=["POST"])
+def create_user():
+    # TODO create a new user
+    return jsonify({"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
+
+
+@app.route("/api/user", methods=["DELETE"])
+def delete_user():
+    # TODO delete a user
+    return jsonify({"success": True})
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def login():
+    response = jsonify({"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
+    response.set_cookie("access_token", "xxxxx.yyyyy.zzzzz") # TODO Generate access token
+    return response
+
+
+@app.route("/api/auth/logout", methods=["POST"])
+def logout():
+    response = jsonify({"success": True})
+    response.set_cookie("access_token", "")
+    return response
+
+
 @app.route("/api/<user>/files")
 def list_files(user):
     # TODO Get files of the user
@@ -31,7 +57,7 @@ def list_files(user):
 
 @app.route("/api/<user>/files/<id>")
 def download_file(user, id):
-    file_path = None # TODO get Path from database
+    file_path = None  # TODO get Path from database
     # TODO Set UPLOAD_FOLDER and add user specific stuff
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"])
     return send_from_directory(directory=uploads, filename=file_path)
@@ -45,7 +71,7 @@ def upload_file(user):
 
 @app.route("/api/<user>/files/<id>", methods=["DELETE"])
 def delete_file(user, id):
-    file_path = None # TODO get Path from database
+    file_path = None  # TODO get Path from database
     # TODO delete teh file
     return jsonify({"success": True})
 
