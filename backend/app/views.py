@@ -50,7 +50,7 @@ def delete_file(user, id):
     return jsonify({"success": True})
 
 
-@app.route("/api/<user>/file/<id>", methods=["PUT"])
+@app.route("/api/<user>/files/<id>", methods=["PUT"])
 def rename_file(user, id):
     # TODO get the new name from the request
     return jsonify({"success": True})
