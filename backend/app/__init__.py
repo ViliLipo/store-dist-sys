@@ -10,6 +10,9 @@ CORS(app)
 app.config.from_object("config")
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 from app import views  # nopep8
 from app import models  # nopep8
 
@@ -35,6 +38,3 @@ except:
     print("rollback")
     db.session.rollback()
     db.engine.dispose()
-
-login_manager = LoginManager()
-login_manager.init_app(app)
