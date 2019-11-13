@@ -1,7 +1,13 @@
-from app import app
+from app import app, login_manager
 from flask import jsonify, send_from_directory
 from app.models import StoredFile, FileShare, Account
+from flask_login import login_required, login_user, logout_user, current_user
 import os
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return flask
 
 
 @app.route("/")
@@ -17,7 +23,7 @@ def create_user():
 
 @app.route("/api/user", methods=["DELETE"])
 def delete_user():
-    # TODO delete a user
+    # TODO delete a user (log them out if it's current user)
     return jsonify({"success": True})
 
 
@@ -25,19 +31,23 @@ def delete_user():
 def login():
     response = jsonify(
         {"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
-    # TODO Generate access token
-    response.set_cookie("access_token", "xxxxx.yyyyy.zzzzz")
+    
+    # TODO get the user and verify password.
+    user = {}
+
+    login_user(user)
+
     return response
 
 
 @app.route("/api/auth/logout", methods=["POST"])
 def logout():
-    response = jsonify({"success": True})
-    response.set_cookie("access_token", "")
-    return response
+    logout_user(current_user)
+    return jsonify({"success": True})
 
 
 @app.route("/api/<user>/files")
+@login_required
 def list_files(user):
     files = StoredFile.query.filter(StoredFile.ownerId == user).all()
     fileDicts = list(map(lambda f: f.toDict(), files))
@@ -45,6 +55,7 @@ def list_files(user):
 
 
 @app.route("/api/<user>/files/<id>")
+@login_required
 def download_file(user, id):
     file_path = None  # TODO get Path from database
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], user)
@@ -52,6 +63,7 @@ def download_file(user, id):
 
 
 @app.route("/api/<user>/files", methods=["POST"])
+@login_required
 def upload_file(user):
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], user)
     file = None
@@ -68,6 +80,7 @@ def upload_file(user):
 
 
 @app.route("/api/<user>/files/<id>", methods = ["DELETE"])
+@login_required
 def delete_file(user, id):
     file_path=None  # TODO get Path from database
     # TODO delete teh file
@@ -75,6 +88,7 @@ def delete_file(user, id):
 
 
 @app.route("/api/<user>/files/<id>", methods = ["PUT"])
+@login_required
 def rename_file(user, id):
     # TODO get the new name from the request
     return jsonify({"success": True})
