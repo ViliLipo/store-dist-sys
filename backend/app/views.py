@@ -1,5 +1,5 @@
 from app import app, login_manager
-from flask import jsonify, send_from_directory
+from flask import request, jsonify, send_from_directory
 from app.models import StoredFile, FileShare, Account
 from flask_login import login_required, login_user, logout_user, current_user
 import os
@@ -7,7 +7,13 @@ import os
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return flask
+    response = jsonify({'error': 'Unauthorized, please log in.'})
+    return response, 403
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    account = Account.query.filter_by(id=user_id).first()
 
 
 @app.route("/")
@@ -29,15 +35,27 @@ def delete_user():
 
 @app.route("/api/auth/login", methods=["POST"])
 def login():
-    response = jsonify(
-        {"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
-    
-    # TODO get the user and verify password.
-    user = {}
+    form = request.json['email']
 
-    login_user(user)
+    email = form['username']
+    if not email:
+        return jsonify({"success": False, "error": "Specify username"})
 
-    return response
+    password = form['password']
+    if not password:
+        return jsonify({"success": False, "error": "Specify a password"})
+
+    account = Account.query.filter_by(email=email).first()
+
+    if not account:
+        return jsonify({"success": False, "error": "User doesn't exist"})
+
+    if not password == account.password:
+        return jsonify({"success": False, "error": "Wrong Password"})
+
+    login_user(account)
+
+    return jsonify({"success": True})
 
 
 @app.route("/api/auth/logout", methods=["POST"])
@@ -79,15 +97,15 @@ def upload_file(user):
         return jsonify({"success": False, "error": error})
 
 
-@app.route("/api/<user>/files/<id>", methods = ["DELETE"])
+@app.route("/api/<user>/files/<id>", methods=["DELETE"])
 @login_required
 def delete_file(user, id):
-    file_path=None  # TODO get Path from database
+    file_path = None  # TODO get Path from database
     # TODO delete teh file
     return jsonify({"success": True})
 
 
-@app.route("/api/<user>/files/<id>", methods = ["PUT"])
+@app.route("/api/<user>/files/<id>", methods=["PUT"])
 @login_required
 def rename_file(user, id):
     # TODO get the new name from the request

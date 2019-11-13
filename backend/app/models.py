@@ -23,6 +23,11 @@ class Account(db.Model):
     )
     sharedfiles = db.relationship("FileShare", back_populates="user")
 
+    # Required by flask login
+    is_authenticated = True
+    is_active = True
+    is_anonymous = False
+
     def __init__(self, email, password):
         self.email = email
         self.password = password
@@ -30,6 +35,10 @@ class Account(db.Model):
 
     def __repr__(self):
         return "<User %r>" % self.email
+
+    # Required by flask login
+    def get_id(self):
+        return self.id
 
 
 class StoredFile(db.Model):
