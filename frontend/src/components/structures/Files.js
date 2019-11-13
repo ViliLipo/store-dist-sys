@@ -7,7 +7,10 @@ function Files(props) {
         <tbody>
             { props.files.map(file => {
                 return (
-                    <File key={file.id} file={file} />
+                    <File
+                        key={file.id}
+                        file={file}
+                    />
                 )
             }) }
         </tbody>

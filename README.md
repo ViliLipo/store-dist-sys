@@ -17,7 +17,4 @@ babel, etc.).
 ### Getting started
 * `$ cd frontend`
 * `$ yarn install`
-
-The next two commands require two separate terminal instances.
-* `$ yarn watch`
 * `$ yarn start`

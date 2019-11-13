@@ -5,7 +5,14 @@ module.exports = {
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'dist.bundle.js'
+        filename: 'dist.bundle.js',
+        publicPath: '/'
+    },
+    resolve: {
+        alias: {
+            components: path.resolve(__dirname, 'src/components/'),
+            core: path.resolve(__dirname, 'src/')
+        }
     },
     module: {
         rules: [
@@ -26,6 +33,7 @@ module.exports = {
     },
     mode: 'development',
     devServer: {
+        historyApiFallback: true,
         contentBase: path.resolve(__dirname, 'dist'),
         compress: true,
         port: 9000

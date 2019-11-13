@@ -35,16 +35,21 @@ const getFiles = (user) => {
     return request(`/api/${user}/files`);
 }
 
-const getFile = (user, file) => {
-    return request(`/api/${user}/files/${file}`);
+const downloadFile = (user, id) => {
+    return request(`/api/${user}/files/${id}`);
 }
 
-const uploadFile = (user, file) => {
-    return request(`/api/${user}/files`, 'POST', file);
+// TODO: will need correction when the backend route is fixed.
+const uploadFile = (user, id) => {
+    return request(`/api/${user}/files`, 'POST', user);
 }
 
-const deleteFile = (user, file) => {
-    return request(`/api/${user}/files`, 'DELETE', file);
+const deleteFile = (user, id) => {
+    return request(`/api/${user}/files/${id}`, 'DELETE', { user, id });
+}
+
+const renameFile = (user, id) => {
+    return request(`/api/${user}/files/${id}`, 'PUT', { user, id });
 }
 
 const getSharedFiles = (user) => {
@@ -66,9 +71,10 @@ const api = {
     },
     files: {
         getFiles,
-        getFile,
+        downloadFile,
         uploadFile,
-        deleteFile
+        deleteFile,
+        renameFile
     },
     sharing: {
         getSharedFiles,
