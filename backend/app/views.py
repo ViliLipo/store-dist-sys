@@ -1,8 +1,13 @@
-from app import app
+from app import app, login_manager
 from flask import jsonify, send_from_directory
 from app.models import StoredFile, FileShare, Account
 from flask_login import login_required, login_user, logout_user, current_user
 import os
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return flask
 
 
 @app.route("/")
@@ -28,23 +33,17 @@ def login():
         {"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
     
     # TODO get the user and verify password.
-    
-    access_token = "xxxxx.yyyyy.zzzzz" # TODO Generate access token
-    user = {"access_token": access_token}
+    user = {}
 
     login_user(user)
-    response.set_cookie("access_token", access_token)
 
     return response
 
 
 @app.route("/api/auth/logout", methods=["POST"])
 def logout():
-    response = jsonify({"success": True})
-    response.set_cookie("access_token", "")
-
     logout_user(current_user)
-    return response
+    return jsonify({"success": True})
 
 
 @app.route("/api/<user>/files")
