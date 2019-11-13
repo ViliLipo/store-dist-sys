@@ -19,7 +19,7 @@ class Account(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(32))
     files = db.relationship(
-        "storedfile", back_populates="user", cascade="all, delete-orphan"
+        "StoredFile", back_populates="owner", cascade="all, delete-orphan"
     )
     sharedfiles = db.relationship("FileShare", back_populates="user")
 
@@ -34,7 +34,8 @@ class Account(db.Model):
 
 class StoredFile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ownerEmail = db.Column(db.String(120), db.ForeignKey("account.email"))
+    ownerEmail = db.Column(db.String(120))
+    ownerId = db.Column(db.Integer, db.ForeignKey("account.id"))
     owner = db.relationship("Account", back_populates="files")
     path = db.Column(db.String(200), unique=True)
     name = db.Column(db.String(200))
@@ -44,10 +45,21 @@ class StoredFile(db.Model):
                          onupdate=db.func.current_timestamp())
     sha1_hash = db.Column(db.Integer)
 
-    def __init__(self, ownerEmail, path, name, sha1_hash):
+    def __init__(self, ownerId, ownerEmail, path, name, sha1_hash):
+        self.ownerId = ownerId
         self.ownerEmail = ownerEmail
         self.path = path
         self.shareholders = []
         self.name = name
         self.sha1_hash = sha1_hash
 
+    def toDict(self):
+        return {
+                "name": self.name,
+                "path": self.path,
+                "created": self.created,
+                "modified": self.modified,
+                "sha1_hash": self.sha1_hash,
+                "owner": self.ownerEmail,
+                "id": self.id
+                }
