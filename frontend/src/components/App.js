@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
@@ -10,14 +10,6 @@ import { addAuthorization, removeAuthorization } from 'core/redux/actions';
 import api from 'core/api';
 
 function App(props) {
-    const [files, setFiles] = useState([]);
-
-    useEffect(() => {
-        api.files.getFiles('user').then(files => {
-            setFiles(files);
-        });
-    }, []);
-
     const uploadFile = () => {
         api.files.uploadFile('user', 'file').then(response => {
             // TODO: Update when backend is ready.
@@ -30,7 +22,6 @@ function App(props) {
             <Route path='/home' render={({location}) => (
                 props.isAuthorized
                     ? <HomePage
-                        files={ files }
                         uploadFile={ uploadFile }
                         logout={ props.removeAuthorization }
                     />
