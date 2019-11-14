@@ -5,7 +5,11 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(
+    app,
+    supports_credentials=True,
+    resources={r"/api/*": {"origins": "http://localhost:9000"}},
+)
 
 app.config.from_object("config")
 db = SQLAlchemy(app)

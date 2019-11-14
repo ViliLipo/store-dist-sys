@@ -8,7 +8,6 @@ import api from 'core/api';
 function LoginPage(props) {
     const submit = (values) => {
         api.auth.login({...values}).then(response => {
-            console.log('response', response);
             if (response.success) {
                 props.login();
                 props.history.push('/home');

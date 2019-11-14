@@ -3,6 +3,7 @@ from flask import request, jsonify, send_from_directory
 from app.models import StoredFile, FileShare, Account
 from flask_login import login_required, login_user, logout_user, current_user
 from sqlalchemy.exc import IntegrityError
+from flask_cors import cross_origin
 import os
 import sys
 
@@ -16,6 +17,7 @@ def unauthorized():
 @login_manager.user_loader
 def load_user(user_id):
     account = Account.query.filter_by(id=user_id).first()
+    return account
 
 
 @app.route("/")
@@ -67,7 +69,7 @@ def logout():
 
 
 @app.route("/api/<user>/files")
-# @login_required
+@login_required
 def list_files(user):
     files = StoredFile.query.filter(StoredFile.ownerId == user).all()
     fileDicts = list(map(lambda f: f.toDict(), files))
@@ -99,8 +101,7 @@ def upload_file(user):
                 app.root_path, app.config["UPLOAD_FOLDER"], user, filename
             )
             file.save(fullPath)
-            dbFile = StoredFile(
-                userObject.id, userObject.email, fullPath, filename)
+            dbFile = StoredFile(userObject.id, userObject.email, fullPath, filename)
             userObject.files.append(dbFile)
             db.session.add(dbFile)
             db.session.commit()
@@ -132,8 +133,7 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(
-            FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     print(fileDicts)

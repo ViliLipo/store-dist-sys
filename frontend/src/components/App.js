@@ -7,7 +7,6 @@ import LoginPage from 'components/pages/LoginPage';
 import HomePage from 'components/pages/HomePage';
 
 import { addAuthorization, removeAuthorization } from 'core/redux/actions';
-import api from 'core/api';
 
 function App(props) {
     const uploadFile = () => {
