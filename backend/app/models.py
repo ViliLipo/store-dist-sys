@@ -1,4 +1,5 @@
 from app import db
+from hashlib import sha1
 
 
 class FileShare(db.Model):
@@ -54,21 +55,35 @@ class StoredFile(db.Model):
                          onupdate=db.func.current_timestamp())
     sha1_hash = db.Column(db.Integer)
 
-    def __init__(self, ownerId, ownerEmail, path, name, sha1_hash):
+    def __init__(self, ownerId, ownerEmail, path, name):
         self.ownerId = ownerId
         self.ownerEmail = ownerEmail
         self.path = path
         self.shareholders = []
         self.name = name
-        self.sha1_hash = sha1_hash
+        self.sha1_hash = StoredFile.createFileSHA1Hash(self.path)
 
     def toDict(self):
         return {
-                "name": self.name,
-                "path": self.path,
-                "created": self.created,
-                "modified": self.modified,
-                "sha1_hash": self.sha1_hash,
-                "owner": self.ownerEmail,
-                "id": self.id
-                }
+            "name": self.name,
+            "path": self.path,
+            "created": self.created,
+            "modified": self.modified,
+            "sha1_hash": self.sha1_hash,
+            "owner": self.ownerEmail,
+            "id": self.id
+        }
+
+    @staticmethod
+    def createFileSHA1Hash(path):
+        f = open(path, "rb")
+        sha = sha1()
+        while True:
+            data = f.read(65536)
+            if not data:
+                break
+            sha.update(data)
+        value = sha.hexdigest()
+        f.close()
+        print(value)
+        return value

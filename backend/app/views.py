@@ -1,13 +1,15 @@
-from app import app, login_manager
+from app import app, login_manager, db
 from flask import request, jsonify, send_from_directory
 from app.models import StoredFile, FileShare, Account
 from flask_login import login_required, login_user, logout_user, current_user
+from sqlalchemy.exc import IntegrityError
 import os
+import sys
 
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    response = jsonify({'error': 'Unauthorized, please log in.'})
+    response = jsonify({"error": "Unauthorized, please log in."})
     return response, 403
 
 
@@ -35,13 +37,13 @@ def delete_user():
 
 @app.route("/api/auth/login", methods=["POST"])
 def login():
-    form = request.json['email']
+    form = request.json["email"]
 
-    email = form['username']
+    email = form["username"]
     if not email:
         return jsonify({"success": False, "error": "Specify username"})
 
-    password = form['password']
+    password = form["password"]
     if not password:
         return jsonify({"success": False, "error": "Specify a password"})
 
@@ -65,7 +67,7 @@ def logout():
 
 
 @app.route("/api/<user>/files")
-@login_required
+# @login_required
 def list_files(user):
     files = StoredFile.query.filter(StoredFile.ownerId == user).all()
     fileDicts = list(map(lambda f: f.toDict(), files))
@@ -75,25 +77,40 @@ def list_files(user):
 @app.route("/api/<user>/files/<id>")
 @login_required
 def download_file(user, id):
-    file_path = None  # TODO get Path from database
+    print("GET FILE")
+    f = StoredFile.query.filter(StoredFile.id == id).first()
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], user)
-    return send_from_directory(directory=uploads, filename=file_path)
+    return send_from_directory(directory=uploads, filename=f.name)
 
 
 @app.route("/api/<user>/files", methods=["POST"])
 @login_required
 def upload_file(user):
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], user)
+    if not os.path.exists(uploads):
+        os.makedirs(uploads)
     file = None
     try:
-        file = request.files['file']
+        file = request.files["file"]
         if file:
             filename = file.filename
-            # TODO Add file to database
-            file.save(uploads, filename)
-
+            userObject = Account.query.filter(Account.id == user).first()
+            fullPath = os.path.join(
+                app.root_path, app.config["UPLOAD_FOLDER"], user, filename
+            )
+            file.save(fullPath)
+            dbFile = StoredFile(
+                userObject.id, userObject.email, fullPath, filename)
+            userObject.files.append(dbFile)
+            db.session.add(dbFile)
+            db.session.commit()
+            db.engine.dispose()
         return jsonify({"success": True})
-    except error:
+    except IntegrityError:
+        return jsonify({"success": False, "error": "File already exists"})
+    except Exception:
+        print(sys.exc_info()[2])
+        error = "500"
         return jsonify({"success": False, "error": error})
 
 
@@ -114,8 +131,10 @@ def rename_file(user, id):
 
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
-    files = FileShare.query.filter(
-        FileShare.userId == user).join(FileShare.fileItem).all()
+    files = (
+        FileShare.query.filter(FileShare.userId == user).join(
+            FileShare.fileItem).all()
+    )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     print(fileDicts)
     return jsonify(fileDicts)
