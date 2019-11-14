@@ -15,17 +15,14 @@ function Files(props) {
 
     return (
         <tbody>
-            { Array.isArray(props.files) ? props.files.map(file => {
+            { Array.isArray(props.files) && props.files.map(file => {
                 return (
                     <File
                         key={file.id}
                         file={file}
                     />
                 )
-            }) : <tr>
-                    <td>Temporary error message: <b>{ props.files.error }</b></td>
-                    <td>TODO: Remove this after the problem is resolved..</td>
-                </tr> }
+            }) }
         </tbody>
     )
 }
