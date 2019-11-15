@@ -45,14 +45,14 @@ def create_user():
     db.session.add(account)
     db.session.commit()
     db.engine.dispose()
-    
+
     registered = Account.query.filter_by(email=email).first()
     if not registered:
         return jsonify({"success": False, "error": "Failed to save user"})
 
     login_user(registered)
 
-    return jsonify({"success": True, "user_id"=registered.id})
+    return jsonify({"success": True, "user_id": registered.id})
 
 
 @app.route("/api/user", methods=["DELETE"])
@@ -83,7 +83,7 @@ def login():
 
     login_user(account)
 
-    return jsonify({"success": True, "user_id"=account.id})
+    return jsonify({"success": True, "user_id": account.id})
 
 
 @app.route("/api/auth/logout", methods=["POST"])
@@ -125,7 +125,8 @@ def upload_file(user):
                 app.root_path, app.config["UPLOAD_FOLDER"], user, filename
             )
             file.save(fullPath)
-            dbFile = StoredFile(userObject.id, userObject.email, fullPath, filename)
+            dbFile = StoredFile(
+                userObject.id, userObject.email, fullPath, filename)
             userObject.files.append(dbFile)
             db.session.add(dbFile)
             db.session.commit()
@@ -157,7 +158,8 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(
+            FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     print(fileDicts)
