@@ -31,8 +31,7 @@ try:
     db.session.commit()
     db.engine.dispose()
     fileOne = models.StoredFile(
-        userOne.id, userOne.email, "/tmp/uploads/1/test.txt", "test.txt"
-    )
+        userOne.id, userOne.email, "/", "file.txt", "asdfasr")
     db.session.add(fileOne)
     db.session.commit()
     db.engine.dispose()

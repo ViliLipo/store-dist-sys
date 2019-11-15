@@ -1,5 +1,6 @@
-from app import db
+from app import app, db
 from hashlib import sha1
+import os
 
 
 class Folder(db.Model):
@@ -103,7 +104,10 @@ class StoredFile(db.Model):
 
     @staticmethod
     def createFileSHA1Hash(path):
-        f = open(path, "rb")
+        fullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], path
+        )
+        f = open(fullPath, "rb")
         sha = sha1()
         while True:
             data = f.read(65536)
