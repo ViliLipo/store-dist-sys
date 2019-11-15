@@ -23,6 +23,10 @@ const request = (query, method = 'GET', data) => {
     });
 };
 
+const register = (email, password) => {
+    return request('/api/user', 'POST', {email, password});
+};
+
 const login = (email, password) => {
     return request('/api/auth/login', 'POST', {email, password});
 };
@@ -66,6 +70,7 @@ const removeShared = (user, filename, email) => {
 
 const api = {
     auth: {
+        register,
         login,
         logout,
     },
