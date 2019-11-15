@@ -1,6 +1,6 @@
 from app import app, login_manager, db
 from flask import request, jsonify, send_from_directory
-from app.models import StoredFile, FileShare, Account
+from app.models import StoredFile, FileShare, Account, Folder
 from flask_login import login_required, login_user, logout_user, current_user
 from sqlalchemy.exc import IntegrityError
 from flask_cors import cross_origin
@@ -101,7 +101,8 @@ def upload_file(user):
                 app.root_path, app.config["UPLOAD_FOLDER"], user, filename
             )
             file.save(fullPath)
-            dbFile = StoredFile(userObject.id, userObject.email, fullPath, filename)
+            dbFile = StoredFile(
+                userObject.id, userObject.email, fullPath, filename)
             userObject.files.append(dbFile)
             db.session.add(dbFile)
             db.session.commit()
@@ -133,8 +134,32 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(
+            FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     print(fileDicts)
     return jsonify(fileDicts)
+
+
+@app.route("/api/<user>/folder/new", methods=["POST"])
+def createFolder(user):
+    try:
+        name = request.form["name"]
+        path = request.form["path"]
+        if path.startswith('/'):
+            path = path[1:]
+        fullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], user, path, name
+        )
+        os.makedirs(fullPath)
+        folder = Folder(name, path, user)
+        owner = Account.query.filter(Account.id == user).first()
+        owner.folders.append(folder)
+        db.session.add(owner)
+        db.session.add(folder)
+        db.session.commit()
+        db.engine.dispose()
+        return jsonify({"success": True})
+    except FileExistsError:
+        return jsonify({"success": False, "error": "Folder already exists"})
