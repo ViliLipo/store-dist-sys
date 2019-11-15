@@ -45,14 +45,14 @@ def create_user():
     db.session.add(account)
     db.session.commit()
     db.engine.dispose()
-    
+
     registered = Account.query.filter_by(email=email).first()
     if not registered:
         return jsonify({"success": False, "error": "Failed to save user"})
 
     login_user(registered)
 
-    return jsonify({"success": True, "user_id"=registered.id})
+    return jsonify({"success": True, "user_id":registered.id})
 
 
 @app.route("/api/user", methods=["DELETE"])
@@ -83,7 +83,7 @@ def login():
 
     login_user(account)
 
-    return jsonify({"success": True, "user_id"=account.id})
+    return jsonify({"success": True, "user_id":account.id})
 
 
 @app.route("/api/auth/logout", methods=["POST"])
