@@ -15,17 +15,12 @@ function Files(props) {
 
     return (
         <tbody>
-            { Array.isArray(props.files) && props.files.map(file => {
-                return (
-                    <File
-                        key={file.id}
-                        file={file}
-                    />
-                )
-            }) }
+            {Array.isArray(props.files) &&
+                props.files.map(file => {
+                    return <File key={file.id} file={file} />;
+                })}
         </tbody>
-    )
+    );
 }
 
 export default Files;
-

@@ -5,11 +5,8 @@ const options = {
         ['Content-Type', 'application/json'],
     ],
     credentials: 'include',
-}
+};
 
 const url = 'http://localhost:5000';
 
-export {
-    options,
-    url
-}
+export {options, url};
