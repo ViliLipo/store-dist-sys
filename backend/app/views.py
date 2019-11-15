@@ -27,8 +27,32 @@ def index():
 
 @app.route("/api/user", methods=["POST"])
 def create_user():
-    # TODO create a new user
-    return jsonify({"success": True, "user_id": "01f009e0-76ad-423c-8439-37257df04880"})
+    form = request.json["email"]
+
+    email = form["username"]
+    if not email:
+        return jsonify({"success": False, "error": "Specify username"})
+
+    existing = Account.query.filter_by(email=email).first()
+    if existing:
+        return jsonify({"success": False, "error": "User already exists"})
+
+    password = form["password"]
+    if not password:
+        return jsonify({"success": False, "error": "Specify a password"})
+
+    account = Account(email, password)
+    db.session.add(account)
+    db.session.commit()
+    db.engine.dispose()
+    
+    registered = Account.query.filter_by(email=email).first()
+    if not registered:
+        return jsonify({"success": False, "error": "Failed to save user"})
+
+    login_user(registered)
+
+    return jsonify({"success": True, "user_id"=registered.id})
 
 
 @app.route("/api/user", methods=["DELETE"])
@@ -59,7 +83,7 @@ def login():
 
     login_user(account)
 
-    return jsonify({"success": True})
+    return jsonify({"success": True, "user_id"=account.id})
 
 
 @app.route("/api/auth/logout", methods=["POST"])
