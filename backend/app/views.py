@@ -83,7 +83,11 @@ def login():
 
     login_user(account)
 
+<<<<<<< HEAD
     return jsonify({"success": True, "user_id": account.id})
+=======
+    return jsonify({"success": True, "user_id":account.id})
+>>>>>>> 3c0a0ea1fd93c1cae81296afbc26ce774e7a852a
 
 
 @app.route("/api/auth/logout", methods=["POST"])
