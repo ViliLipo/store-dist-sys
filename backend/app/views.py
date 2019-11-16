@@ -120,7 +120,7 @@ def upload_file(user):
         file = request.files["file"]
         if file:
             filename = file.filename
-            userObject = Account.query.filter(Account.id == user).first()
+            userObject = Account.query.filter(Account.email == user).first()
             fullPath = os.path.join(
                 app.root_path, app.config["UPLOAD_FOLDER"], user, filename
             )
