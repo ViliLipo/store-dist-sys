@@ -10,6 +10,7 @@ function LoginPage(props) {
         api.auth.login({...values}).then(response => {
             if (response.success) {
                 props.login();
+                props.addUsername(values.username);
                 props.history.push('/home');
             }
         });

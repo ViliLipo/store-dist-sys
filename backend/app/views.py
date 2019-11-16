@@ -88,7 +88,7 @@ def login():
 
 @app.route("/api/auth/logout", methods=["POST"])
 def logout():
-    logout_user(current_user)
+    logout_user()
     return jsonify({"success": True})
 
 
@@ -125,8 +125,7 @@ def upload_file(user):
                 app.root_path, app.config["UPLOAD_FOLDER"], user, filename
             )
             file.save(fullPath)
-            dbFile = StoredFile(
-                userObject.id, userObject.email, fullPath, filename)
+            dbFile = StoredFile(userObject.id, userObject.email, fullPath, filename)
             userObject.files.append(dbFile)
             db.session.add(dbFile)
             db.session.commit()
@@ -158,8 +157,7 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(
-            FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     print(fileDicts)

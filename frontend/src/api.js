@@ -1,5 +1,18 @@
 import {options, url} from './config';
 
+// A request for uploading a file to flask.
+const upload = (user, file) => {
+    return fetch(`${url}/api/${user}/files`, {
+        method: 'POST',
+        body: file,
+        credentials: 'include',
+    }).then(response => {
+        return new Promise((resolve, reject) => {
+            resolve(response.json());
+        });
+    });
+};
+
 // Generic function for making API requests
 const request = (query, method = 'GET', data) => {
     if (method === 'GET') {
@@ -32,7 +45,7 @@ const login = (email, password) => {
 };
 
 const logout = () => {
-    return request('/api/auth/logout');
+    return request('/api/auth/logout', 'POST');
 };
 
 const getFiles = user => {
@@ -44,8 +57,10 @@ const downloadFile = (user, id) => {
 };
 
 // TODO: will need correction when the backend route is fixed.
-const uploadFile = (user, id) => {
-    return request(`/api/${user}/files`, 'POST', user);
+const uploadFile = (user, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return upload(user, formData);
 };
 
 const deleteFile = (user, id) => {

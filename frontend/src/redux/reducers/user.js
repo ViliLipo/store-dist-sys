@@ -1,18 +1,18 @@
-import {ADD_AUTHORIZATION, REMOVE_AUTHORIZATION} from './../actionTypes';
+import {ADD_USERNAME, REMOVE_USERNAME} from './../actionTypes';
 
 const initialState = {
-    isAuthorized: false,
+    username: null,
 };
 
 export default function(state = initialState, action) {
     switch (action.type) {
-        case ADD_AUTHORIZATION: {
+        case ADD_USERNAME: {
             return {
                 ...state,
                 ...action.payload,
             };
         }
-        case REMOVE_AUTHORIZATION: {
+        case REMOVE_USERNAME: {
             return {
                 ...state,
                 ...action.payload,

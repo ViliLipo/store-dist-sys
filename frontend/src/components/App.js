@@ -6,17 +6,15 @@ import LoginPage from 'components/pages/LoginPage';
 import HomePage from 'components/pages/HomePage';
 import RegistrationPage from 'components/pages/RegistrationPage';
 
-import {addAuthorization, removeAuthorization} from 'core/redux/actions';
+import {
+    addAuthorization,
+    removeAuthorization,
+    addUsername,
+    removeUsername,
+} from 'core/redux/actions';
 
 function App(props) {
     // TODO: move out of this file.
-    const uploadFile = () => {
-        api.files.uploadFile('user', 'file').then(response => {
-            // TODO: Update when backend is ready.
-            console.log(response);
-        });
-    };
-
     return (
         <Switch>
             <Route
@@ -24,7 +22,8 @@ function App(props) {
                 render={({location}) =>
                     props.isAuthorized ? (
                         <HomePage
-                            uploadFile={uploadFile}
+                            user={props.username}
+                            removeUsername={props.removeUsername}
                             logout={props.removeAuthorization}
                         />
                     ) : (
@@ -48,6 +47,7 @@ function App(props) {
                     <LoginPage
                         history={history}
                         login={props.addAuthorization}
+                        addUsername={props.addUsername}
                     />
                 )}
             />
@@ -59,10 +59,13 @@ function App(props) {
 const mapStateToProps = state => {
     return {
         isAuthorized: state.auth.isAuthorized,
+        username: state.user.username,
     };
 };
 
 export default connect(mapStateToProps, {
     addAuthorization,
     removeAuthorization,
+    addUsername,
+    removeUsername,
 })(App);
