@@ -14,7 +14,6 @@ import {
 } from 'core/redux/actions';
 
 function App(props) {
-    // TODO: move out of this file.
     return (
         <Switch>
             <Route

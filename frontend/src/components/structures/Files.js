@@ -14,12 +14,20 @@ function Files(props) {
     }
 
     return (
-        <tbody>
-            {Array.isArray(props.files) &&
-                props.files.map(file => {
-                    return <File key={file.id} file={file} />;
-                })}
-        </tbody>
+        <>
+            <thead>
+                <tr>
+                    <td>name</td>
+                    <td>path</td>
+                </tr>
+            </thead>
+            <tbody>
+                {Array.isArray(props.files) &&
+                    props.files.map(file => {
+                        return <File key={file.id} file={file} />;
+                    })}
+            </tbody>
+        </>
     );
 }
 

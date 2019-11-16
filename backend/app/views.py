@@ -95,7 +95,7 @@ def logout():
 @app.route("/api/<user>/files")
 @login_required
 def list_files(user):
-    files = StoredFile.query.filter(StoredFile.ownerId == user).all()
+    files = StoredFile.query.filter(StoredFile.ownerEmail == user).all()
     fileDicts = list(map(lambda f: f.toDict(), files))
     return jsonify(fileDicts)
 
