@@ -3,7 +3,6 @@ import {reduxForm, Field} from 'redux-form';
 
 const handleChange = handler => ({target: {files}}) =>
     handler(files.length && files[0]);
-//handler(files.length ? {file: files[0], filename: files[0].name} : {});
 
 const FileInput = ({
     input: {onChange, onBlur, value: omitValue, ...inputProps},
