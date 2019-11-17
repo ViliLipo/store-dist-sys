@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 
 import Files from 'components/structures/Files';
 import UploadFileForm from 'components/forms/UploadFileForm';
@@ -6,17 +6,21 @@ import UploadFileForm from 'components/forms/UploadFileForm';
 import api from 'core/api';
 
 function HomePage(props) {
-    const [files, setFiles] = useState([]);
-
     useEffect(() => {
         api.files.getFiles(props.user).then(files => {
-            setFiles(files);
+            props.setFiles(files);
         });
     }, []);
 
     const submit = values => {
         api.files.uploadFile(props.user, values.file).then(response => {
-            console.log(response);
+            if (response.success) {
+                // TODO: if there's time, add error handling.
+                // Refresh the file list after uploading a new file.
+                api.files.getFiles(props.user).then(files => {
+                    props.setFiles(files);
+                });
+            }
         });
     };
 
@@ -33,7 +37,7 @@ function HomePage(props) {
         <div>
             Distributed Systems 2019
             <table>
-                <Files files={files} />
+                <Files user={props.user} files={props.files} />
             </table>
             <UploadFileForm onSubmit={submit} />
             <button onClick={logout}>Logout</button>

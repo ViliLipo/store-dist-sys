@@ -24,7 +24,9 @@ function Files(props) {
             <tbody>
                 {Array.isArray(props.files) &&
                     props.files.map(file => {
-                        return <File key={file.id} file={file} />;
+                        return (
+                            <File user={props.user} key={file.id} file={file} />
+                        );
                     })}
             </tbody>
         </>

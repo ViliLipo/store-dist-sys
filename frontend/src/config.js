@@ -1,12 +1,12 @@
-// Created assuming that it'll expand.
-const options = {
-    headers: [
-        ['Accept', 'application/json'],
-        ['Content-Type', 'application/json'],
-    ],
-    credentials: 'include',
-};
-
 const url = 'http://localhost:5000';
 
-export {options, url};
+// Empty headers for upload.
+const empty = new Headers([]);
+
+// Default headers.
+const regular = new Headers([
+    ['Accept', 'application/json'],
+    ['Content-Type', 'application/json'],
+]);
+
+export {url, empty, regular};

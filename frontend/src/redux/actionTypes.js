@@ -5,3 +5,6 @@ export const REMOVE_AUTHORIZATION = 'REMOVE_AUTHORIZATION';
 // Username tracking.
 export const ADD_USERNAME = 'ADD_USERNAME';
 export const REMOVE_USERNAME = 'REMOVE_USERNAME';
+
+// Files
+export const SET_FILES = 'SET_FILES';

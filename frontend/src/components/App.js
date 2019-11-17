@@ -11,6 +11,7 @@ import {
     removeAuthorization,
     addUsername,
     removeUsername,
+    setFiles,
 } from 'core/redux/actions';
 
 function App(props) {
@@ -23,6 +24,8 @@ function App(props) {
                         <HomePage
                             user={props.username}
                             removeUsername={props.removeUsername}
+                            setFiles={props.setFiles}
+                            files={props.files}
                             logout={props.removeAuthorization}
                         />
                     ) : (
@@ -59,6 +62,7 @@ const mapStateToProps = state => {
     return {
         isAuthorized: state.auth.isAuthorized,
         username: state.user.username,
+        files: state.files.files,
     };
 };
 
@@ -67,4 +71,5 @@ export default connect(mapStateToProps, {
     removeAuthorization,
     addUsername,
     removeUsername,
+    setFiles,
 })(App);

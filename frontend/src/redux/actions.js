@@ -3,6 +3,7 @@ import {
     REMOVE_AUTHORIZATION,
     ADD_USERNAME,
     REMOVE_USERNAME,
+    SET_FILES,
 } from './actionTypes';
 
 export const addAuthorization = () => ({
@@ -30,5 +31,12 @@ export const removeUsername = () => ({
     type: REMOVE_USERNAME,
     payload: {
         username: null,
+    },
+});
+
+export const setFiles = files => ({
+    type: SET_FILES,
+    payload: {
+        files,
     },
 });

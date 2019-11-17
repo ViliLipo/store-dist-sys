@@ -1,23 +1,17 @@
-import {options, url} from './config';
-
-// A request for uploading a file to flask.
-const upload = (user, file) => {
-    return fetch(`${url}/api/${user}/files`, {
-        method: 'POST',
-        body: file,
-        credentials: 'include',
-    }).then(response => {
-        return new Promise((resolve, reject) => {
-            resolve(response.json());
-        });
-    });
-};
+import {url, empty, regular} from './config';
 
 // Generic function for making API requests
-const request = (query, method = 'GET', data) => {
+const request = (
+    query,
+    method = 'GET',
+    data,
+    headers = regular,
+    stringify = true,
+) => {
     if (method === 'GET') {
         return fetch(`${url}${query}`, {
-            ...options,
+            headers,
+            credentials: 'include',
         }).then(response => {
             return new Promise((resolve, reject) => {
                 resolve(response.json());
@@ -27,8 +21,9 @@ const request = (query, method = 'GET', data) => {
 
     return fetch(`${url}${query}`, {
         method,
-        body: JSON.stringify(data),
-        ...options,
+        headers,
+        credentials: 'include',
+        body: stringify ? JSON.stringify(data) : data,
     }).then(response => {
         return new Promise((resolve, reject) => {
             resolve(response.json());
@@ -52,15 +47,10 @@ const getFiles = user => {
     return request(`/api/${user}/files`);
 };
 
-const downloadFile = (user, id) => {
-    return request(`/api/${user}/files/${id}`);
-};
-
-// TODO: will need correction when the backend route is fixed.
 const uploadFile = (user, file) => {
     const formData = new FormData();
     formData.append('file', file);
-    return upload(user, formData);
+    return request(`/api/${user}/files`, 'POST', formData, empty, false);
 };
 
 const deleteFile = (user, id) => {
@@ -91,7 +81,6 @@ const api = {
     },
     files: {
         getFiles,
-        downloadFile,
         uploadFile,
         deleteFile,
         renameFile,

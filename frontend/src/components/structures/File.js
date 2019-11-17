@@ -1,6 +1,7 @@
 import React from 'react';
 
 import api from 'core/api';
+import {url} from 'core/config';
 
 function File(props) {
     // These functions should be moved out of this file.
@@ -16,11 +17,7 @@ function File(props) {
         });
     };
 
-    const downloadFile = id => {
-        api.files.downloadFile('user', id).then(reponse => {
-            console.log(response);
-        });
-    };
+    const href = `${url}/api/${props.user}/files/${props.file.id}`;
 
     return (
         <tr>
@@ -32,9 +29,9 @@ function File(props) {
                 </button>
             </td>
             <td>
-                <button onClick={() => downloadFile(props.file.id)}>
+                <a download={props.file.name} href={href} target="_blank">
                     Download
-                </button>
+                </a>
             </td>
             <td>
                 <button onClick={() => deleteFile(props.file.id)}>
