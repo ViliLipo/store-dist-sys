@@ -19,7 +19,7 @@ function RegistrationPage(props) {
                 }
             })
             .catch(err => {
-                props.showNotification(err);
+                props.showNotification(err.message);
             });
     };
 
