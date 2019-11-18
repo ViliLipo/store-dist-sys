@@ -19,8 +19,6 @@ function File(props) {
 
     const href = `${url}/api/${props.user}/files/${props.file.id}`;
     
-    console.log("File")
-    console.log(props.file)
     return (
         <tr>
             <td>{props.file.name}</td>

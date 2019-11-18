@@ -17,7 +17,6 @@ function Files(props) {
     [],
     props.files.map(folder => folder.files),
   );
-  console.log(flatFileList)
 
   return (
     <>
