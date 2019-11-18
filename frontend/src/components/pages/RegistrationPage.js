@@ -1,6 +1,7 @@
 import React from 'react';
 
 import RegistrationForm from 'components/forms/RegistrationForm';
+import Navigation from 'components/structures/Navigation';
 
 import api from 'core/api';
 
@@ -15,7 +16,12 @@ function RegistrationPage(props) {
         });
     };
 
-    return <RegistrationForm onSubmit={submit} />;
+    return (
+        <>
+            <Navigation />
+            <RegistrationForm onSubmit={submit} />
+        </>
+    );
 }
 
 export default RegistrationPage;

@@ -2,6 +2,7 @@ import React from 'react';
 import {withRouter} from 'react-router-dom';
 
 import LoginForm from 'components/forms/LoginForm';
+import Navigation from 'components/structures/Navigation';
 
 import api from 'core/api';
 
@@ -16,7 +17,12 @@ function LoginPage(props) {
         });
     };
 
-    return <LoginForm onSubmit={submit} />;
+    return (
+        <>
+            <Navigation />
+            <LoginForm onSubmit={submit} />
+        </>
+    );
 }
 
 export default withRouter(LoginPage);
