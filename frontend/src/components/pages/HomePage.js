@@ -13,6 +13,7 @@ function HomePage(props) {
     }, []);
 
     const submit = values => {
+        const homeFolderId = props.files[0].id
         api.files.uploadFile(props.user, props.files[0].id, values.file).then(response => {
             if (response.success) {
                 // TODO: if there's time, add error handling.
