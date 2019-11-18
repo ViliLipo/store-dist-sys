@@ -104,11 +104,10 @@ def list_files(user):
 
 @app.route("/api/<user>/files/<folderId>/<id>")
 @login_required
-def download_file(user, id):
-    print("GET FILE")
+def download_file(user, id, folderId):
     f = StoredFile.query.filter(StoredFile.id == id).first()
     uploads = os.path.join(
-        app.root_path, app.config["UPLOAD_FOLDER"], user, f.path)
+        app.root_path, app.config["UPLOAD_FOLDER"], f.path.strip(f.name))
     return send_from_directory(directory=uploads, filename=f.name)
 
 
