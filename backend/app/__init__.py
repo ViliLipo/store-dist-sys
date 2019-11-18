@@ -30,13 +30,9 @@ try:
     db.session.add(userTwo)
     db.session.commit()
     db.engine.dispose()
-    fileOne = models.StoredFile(
-        userOne.id, userOne.email, "/", "file.txt", "asdfasr")
-    db.session.add(fileOne)
-    db.session.commit()
-    db.engine.dispose()
-    fileShare = models.FileShare(userTwo.id, fileOne.id)
-    db.session.add(fileShare)
+    home = models.Folder("home", "", userTwo.id)
+    userTwo.folders.append(home)
+    db.session.add(home)
     db.session.commit()
     db.engine.dispose()
 except:

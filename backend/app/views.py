@@ -90,16 +90,16 @@ def login():
 
 @app.route("/api/auth/logout", methods=["POST"])
 def logout():
-    logout_user(current_user)
+    logout_user()
     return jsonify({"success": True})
 
 
 @app.route("/api/<user>/files")
 @login_required
 def list_files(user):
-    files = StoredFile.query.filter(StoredFile.ownerId == user).all()
-    fileDicts = list(map(lambda f: f.toDict(), files))
-    return jsonify(fileDicts)
+    folders = Account.query.filter(Account.email == user).first().folders
+    folderDicts = list(map(lambda f: f.toDict(), folders))
+    return jsonify(folderDicts)
 
 
 @app.route("/api/<user>/files/<folderId>/<id>")
@@ -121,7 +121,7 @@ def upload_file(user, folderId):
         file = request.files["file"]
         if file:
             filename = file.filename
-            userObject = Account.query.filter(Account.id == user).first()
+            userObject = Account.query.filter(Account.email == user).first()
             folderObject = Folder.query.filter(Folder.id == folderId).first()
             dirPath = os.path.join(uploads, user, folderObject.path)
             if not os.path.exists(dirPath):
@@ -139,24 +139,48 @@ def upload_file(user, folderId):
         return jsonify({"success": True})
     except IntegrityError:
         return jsonify({"success": False, "error": "File already exists"})
-    except Exception:
-        print(sys.exc_info()[2])
+    except Exception as e:
+        print(e)
         error = "500"
         return jsonify({"success": False, "error": error})
 
 
-@app.route("/api/<user>/files/<folderId>/<id>", methods=["DELETE"])
+@app.route("/api/<user>/file/<id>", methods=["DELETE"])
 @login_required
 def delete_file(user, id):
-    file_path = None  # TODO get Path from database
-    # TODO delete teh file
+    try:
+        fileData = StoredFile.query.filter(
+            StoredFile.id == id
+        ).first()
+        file_path = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], fileData.path
+        )
+        os.remove(file_path)
+        db.session.delete(fileData)
+        db.session.commit()
+        db.engine.dispose()
+    except Exception as e:
+        print(e)
+        return jsonify({"success": False})
     return jsonify({"success": True})
 
 
-@app.route("/api/<user>/files/<folderId>/<id>", methods=["PUT"])
+@app.route("/api/<user>/file/<id>", methods=["PUT"])
 @login_required
 def rename_file(user, id):
     # TODO get the new name from the request
+    print("new Name")
+    try:
+        newName = request.json["name"]
+        print(newName)
+        storedFile = StoredFile.query.filter(StoredFile.id == id).first()
+        storedFile.name = newName
+        print(StoredFile.toDict())
+        db.session.add(storedFile)
+        db.session.commit()
+        db.engine.dispose()
+    except Exception as e:
+        print(e)
     return jsonify({"success": True})
 
 
@@ -176,21 +200,20 @@ def createFolder(user):
     try:
         name = request.json["name"]
         path = request.json["path"]
-        parent = (
-            Folder.query.filter(Folder.userId == user)
-            .filter(Folder.path == path)
-            .first()
-        )
         if path.startswith("/"):
             path = path[1:]
         fullPath = os.path.join(
             app.root_path, app.config["UPLOAD_FOLDER"], user, path, name
         )
-        print(fullPath)
         os.makedirs(fullPath)
         folder = Folder(name, path, user)
-        owner = Account.query.filter(Account.id == user).first()
+        owner = Account.query.filter(Account.email == user).first()
         owner.folders.append(folder)
+        parent = (
+            Folder.query.filter(Folder.userId == owner.id)
+            .filter(Folder.path == path)
+            .first()
+        )
         if parent:
             parent.subfolders.append(folder)
         db.session.add(owner)
