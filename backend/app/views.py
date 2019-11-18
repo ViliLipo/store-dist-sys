@@ -107,7 +107,8 @@ def list_files(user):
 def download_file(user, id, folderId):
     f = StoredFile.query.filter(StoredFile.id == id).first()
     uploads = os.path.join(
-        app.root_path, app.config["UPLOAD_FOLDER"], f.path.strip(f.name))
+        app.root_path, app.config["UPLOAD_FOLDER"], f.path.strip(f.name)
+    )
     return send_from_directory(directory=uploads, filename=f.name)
 
 
@@ -148,9 +149,7 @@ def upload_file(user, folderId):
 @login_required
 def delete_file(user, id):
     try:
-        fileData = StoredFile.query.filter(
-            StoredFile.id == id
-        ).first()
+        fileData = StoredFile.query.filter(StoredFile.id == id).first()
         file_path = os.path.join(
             app.root_path, app.config["UPLOAD_FOLDER"], fileData.path
         )
@@ -170,7 +169,15 @@ def rename_file(user, id):
     try:
         newName = request.json["name"]
         storedFile = StoredFile.query.filter(StoredFile.id == id).first()
+        oldPath = storedFile.path
+        newPath = oldPath.strip(storedFile.name) + newName
         storedFile.name = newName
+        storedFile.path = newPath
+        oldFullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
+        newFullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], newPath)
+        os.rename(oldFullPath, newFullPath)
         db.session.add(storedFile)
         db.session.commit()
         db.engine.dispose()
