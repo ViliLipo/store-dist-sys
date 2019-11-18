@@ -5,8 +5,9 @@ import {url} from 'core/config';
 
 function File(props) {
   // These functions should be moved out of this file.
+  // Get name from some UI-component
   const renameFile = id => {
-    api.files.renameFile(props.user, id).then(response => {
+    api.files.renameFile(props.user, id, 'newMockName').then(response => {
       console.log(response);
     });
   };

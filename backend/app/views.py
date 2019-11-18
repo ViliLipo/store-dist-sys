@@ -167,14 +167,10 @@ def delete_file(user, id):
 @app.route("/api/<user>/file/<id>", methods=["PUT"])
 @login_required
 def rename_file(user, id):
-    # TODO get the new name from the request
-    print("new Name")
     try:
         newName = request.json["name"]
-        print(newName)
         storedFile = StoredFile.query.filter(StoredFile.id == id).first()
         storedFile.name = newName
-        print(StoredFile.toDict())
         db.session.add(storedFile)
         db.session.commit()
         db.engine.dispose()
