@@ -12,11 +12,18 @@ const request = (
         return fetch(`${url}${query}`, {
             headers,
             credentials: 'include',
-        }).then(response => {
-            return new Promise((resolve, reject) => {
-                resolve(response.json());
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+            })
+            .then(response => {
+                return response;
+            })
+            .catch(error => {
+                return Promise.reject({message: error.message});
             });
-        });
     }
 
     return fetch(`${url}${query}`, {
@@ -24,11 +31,20 @@ const request = (
         headers,
         credentials: 'include',
         body: stringify ? JSON.stringify(data) : data,
-    }).then(response => {
-        return new Promise((resolve, reject) => {
-            resolve(response.json());
+    })
+        .then(response => {
+            return response.json();
+        })
+        .then(response => {
+            if (response.success) {
+                return response;
+            } else {
+                return Promise.reject({message: response.error});
+            }
+        })
+        .catch(error => {
+            return new Error(error.message);
         });
-    });
 };
 
 const register = (email, password) => {

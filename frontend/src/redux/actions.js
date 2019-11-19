@@ -4,8 +4,11 @@ import {
     ADD_USERNAME,
     REMOVE_USERNAME,
     SET_FILES,
+    SHOW_NOTIFICATION,
+    HIDE_NOTIFICATION,
 } from './actionTypes';
 
+// This file should be split into separate files if it gets big enough.
 export const addAuthorization = () => ({
     type: ADD_AUTHORIZATION,
     payload: {
@@ -38,5 +41,19 @@ export const setFiles = files => ({
     type: SET_FILES,
     payload: {
         files,
+    },
+});
+
+export const showNotification = notification => ({
+    type: SHOW_NOTIFICATION,
+    payload: {
+        text: notification,
+    },
+});
+
+export const hideNotification = () => ({
+    type: HIDE_NOTIFICATION,
+    payload: {
+        text: '',
     },
 });

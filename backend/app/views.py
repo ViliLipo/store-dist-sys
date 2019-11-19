@@ -30,12 +30,14 @@ def create_user():
     form = request.json["email"]
 
     email = form["username"]
+    # TODO: The form validation should be handled in frontend.
     if not email:
         return jsonify({"success": False, "error": "Specify username"})
 
     existing = Account.query.filter_by(email=email).first()
     if existing:
-        return jsonify({"success": False, "error": "User already exists"})
+        response = jsonify({"success": False, "error": "User already exists"})
+        return jsonify({"success": False, "error": "User already exists"}), 409
 
     password = form["password"]
     if not password:
@@ -50,7 +52,8 @@ def create_user():
 
     registered = Account.query.filter_by(email=email).first()
     if not registered:
-        return jsonify({"success": False, "error": "Failed to save user"})
+        response = jsonify({"success": False, "error": "Failed to save user"})
+        return response, 500
 
     login_user(registered)
 
@@ -78,10 +81,12 @@ def login():
     account = Account.query.filter_by(email=email).first()
 
     if not account:
-        return jsonify({"success": False, "error": "User doesn't exist"})
+        response = jsonify({"success": False, "error": "User doesn't exist"})
+        return response, 404
 
     if not password == account.password:
-        return jsonify({"success": False, "error": "Wrong Password"})
+        response = jsonify({"success": False, "error": "Wrong Password"})
+        return response, 400
 
     login_user(account)
 
@@ -137,12 +142,15 @@ def upload_file(user, folderId):
             db.session.commit()
             db.engine.dispose()
         return jsonify({"success": True})
-    except IntegrityError:
-        return jsonify({"success": False, "error": "File already exists"})
+    except IntegrityError as e:
+        print(e)
+        response = jsonify({"success": False, "error": "File already exists"})
+        return response, 409
     except Exception as e:
         print(e)
-        error = "500"
-        return jsonify({"success": False, "error": error})
+        error = "Internal Server Error"
+        response = jsonify({"success": False, "error": error})
+        return response, 500
 
 
 @app.route("/api/<user>/file/<id>", methods=["DELETE"])
@@ -193,7 +201,6 @@ def list_shared_with_user(user):
             FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
-    print(fileDicts)
     return jsonify(fileDicts)
 
 

@@ -21,10 +21,13 @@ function HomePage(props) {
                 api.files.getFiles(props.user).then(files => {
                     props.setFiles(files);
                 });
+            } else {
+                props.showNotification(response.message);
             }
         });
     };
 
+    // Ideally, it shouldn't fail...
     const logout = () => {
         api.auth.logout().then(response => {
             if (response.success) {

@@ -1,10 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {Switch, Route, Redirect} from 'react-router-dom';
 
-import LoginPage from 'components/pages/LoginPage';
-import HomePage from 'components/pages/HomePage';
-import RegistrationPage from 'components/pages/RegistrationPage';
+import Router from 'components/structures/Router';
+import Notification from 'components/structures/Notification';
 
 import {
     addAuthorization,
@@ -12,49 +10,19 @@ import {
     addUsername,
     removeUsername,
     setFiles,
+    showNotification,
+    hideNotification,
 } from 'core/redux/actions';
 
 function App(props) {
     return (
-        <Switch>
-            <Route
-                path="/home"
-                render={({location}) =>
-                    props.isAuthorized ? (
-                        <HomePage
-                            user={props.username}
-                            removeUsername={props.removeUsername}
-                            setFiles={props.setFiles}
-                            files={props.files}
-                            logout={props.removeAuthorization}
-                        />
-                    ) : (
-                        <Redirect
-                            to={{
-                                pathname: '/',
-                                state: {from: location},
-                            }}
-                        />
-                    )
-                }
+        <>
+            <Notification
+                hideNotification={props.hideNotification}
+                text={props.text}
             />
-            <Route
-                path="/register"
-                render={({history}) => <RegistrationPage history={history} />}
-            />
-            <Route
-                exact
-                path="/"
-                render={({history}) => (
-                    <LoginPage
-                        history={history}
-                        login={props.addAuthorization}
-                        addUsername={props.addUsername}
-                    />
-                )}
-            />
-            <Redirect to="/" />
-        </Switch>
+            <Router {...props} />
+        </>
     );
 }
 
@@ -63,6 +31,7 @@ const mapStateToProps = state => {
         isAuthorized: state.auth.isAuthorized,
         username: state.user.username,
         files: state.files.files,
+        text: state.notification.text,
     };
 };
 
@@ -72,4 +41,6 @@ export default connect(mapStateToProps, {
     addUsername,
     removeUsername,
     setFiles,
+    showNotification,
+    hideNotification,
 })(App);
