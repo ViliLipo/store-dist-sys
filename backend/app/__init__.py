@@ -29,15 +29,16 @@ dictConfig(
     }
 )
 
-
+# TODO: set cors origin so that docker works
 app = Flask(__name__)
 CORS(
     app,
     supports_credentials=True,
-    resources={r"/api/*": {"origins": "http://localhost:9000"}},
+    resources={r"/api/*": {"origins": "http://localhost:5000"}},
 )
 
 app.config.from_object("config")
+print(app.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
