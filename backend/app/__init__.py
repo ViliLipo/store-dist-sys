@@ -56,7 +56,7 @@ try:
     db.session.add(userTwo)
     db.session.commit()
     db.engine.dispose()
-    home = models.Folder("home", "", userTwo.id)
+    home = models.Folder("home", userTwo.email + "/", userTwo.id)
     userTwo.folders.append(home)
     db.session.add(home)
     db.session.commit()

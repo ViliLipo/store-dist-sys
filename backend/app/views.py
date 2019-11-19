@@ -49,7 +49,8 @@ def create_user():
         return jsonify({"success": False, "error": "Specify a password"})
 
     account = Account(email, password)
-    home = Folder("home", "", account.id)
+    # TODO: use os.path join
+    home = Folder("home", email + '/', account.id)
     account.folders.append(home)
     db.session.add(account)
     db.session.commit()
@@ -226,20 +227,19 @@ def create_folder(user):
             app.root_path, app.config["UPLOAD_FOLDER"], user, path, name
         )
         os.makedirs(fullPath)
-        folder = Folder(name, path, user)
+        appPath = os.path.join(path, name)
+        folder = Folder(name, appPath, user)
         owner = Account.query.filter(Account.email == user).first()
         owner.folders.append(folder)
-
         parent = (
             Folder.query.filter(Folder.userId == owner.id)
             .filter(Folder.path == path)
             .first()
         )
-
-        if parent:
-            parent.subfolders.append(folder)
-        db.session.add(owner)
+        if parent is not None:
+            folder.parent = parent
         db.session.add(folder)
+        db.session.add(owner)
         db.session.commit()
         db.engine.dispose()
         app.logger.info("Created folder %s.", folder.path)
