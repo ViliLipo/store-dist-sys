@@ -11,7 +11,8 @@ class Folder(db.Model):
     owner = db.relationship("Account", back_populates="folders")
     parentId = db.Column(db.Integer, db.ForeignKey("folder.id"), nullable=True)
     subfolders = db.relationship(
-        "Folder", backref=db.backref("parent", remote_side=[id])
+        "Folder",
+        backref=db.backref("parent", remote_side=[id], post_update=True)
     )
     files = db.relationship("StoredFile", back_populates="folder")
 
@@ -115,12 +116,10 @@ class StoredFile(db.Model):
             "id": self.id,
         }
 
-
     @staticmethod
     def createFileSHA1Hash(path):
         fullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], path
-        )
+            app.root_path, app.config["UPLOAD_FOLDER"], path)
         f = open(fullPath, "rb")
         sha = sha1()
         while True:
