@@ -53,9 +53,11 @@ def create_user():
     registered = Account.query.filter_by(email=email).first()
     if not registered:
         response = jsonify({"success": False, "error": "Failed to save user"})
+        app.logger.error("Failed to create account %s.", account.email)
         return response, 500
 
     login_user(registered)
+    app.logger.info("Account: %s created", account.email)
 
     return jsonify({"success": True, "user_id": registered.id})
 
@@ -89,6 +91,7 @@ def login():
         return response, 400
 
     login_user(account)
+    app.logger.info("%s logged in.", account.email)
 
     return jsonify({"success": True, "user_id": account.id})
 
@@ -143,11 +146,11 @@ def upload_file(user, folderId):
             db.engine.dispose()
         return jsonify({"success": True})
     except IntegrityError as e:
-        print(e)
+        app.logger.info("Integrity error in creating a file: %s", e)
         response = jsonify({"success": False, "error": "File already exists"})
         return response, 409
     except Exception as e:
-        print(e)
+        app.logger.info("Internal Server Error in creating a file: %s", e)
         error = "Internal Server Error"
         response = jsonify({"success": False, "error": error})
         return response, 500
@@ -166,8 +169,9 @@ def delete_file(user, id):
         db.session.commit()
         db.engine.dispose()
     except Exception as e:
-        print(e)
-        return jsonify({"success": False})
+        app.logger.info("Internal Server Error in creating a file: %s", e)
+        error = "Internal Server Error"
+        return jsonify({"success": False, "error": error}), 500
     return jsonify({"success": True})
 
 
@@ -181,6 +185,7 @@ def rename_file(user, id):
         newPath = oldPath.strip(storedFile.name) + newName
         storedFile.name = newName
         storedFile.path = newPath
+        StoredFile.modified = db.func.current_timestamp()
         oldFullPath = os.path.join(
             app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
         newFullPath = os.path.join(
@@ -189,8 +194,11 @@ def rename_file(user, id):
         db.session.add(storedFile)
         db.session.commit()
         db.engine.dispose()
+        app.logger.info('Renamed %s to %s', oldPath, newPath)
     except Exception as e:
-        print(e)
+        app.logger.info("Internal Server Error in renaming a file: %s", e)
+        error = "Internal Server Error"
+        return jsonify({"success": False, "error": error}), 500
     return jsonify({"success": True})
 
 
@@ -229,8 +237,12 @@ def createFolder(user):
         db.session.add(folder)
         db.session.commit()
         db.engine.dispose()
+        app.logger.info('Created folder %s.', folder.path)
         return jsonify({"success": True})
     except FileExistsError:
-        return jsonify({"success": False, "error": "Folder already exists"})
-    except Exception:
-        return jsonify({"success": False, "error": "Something went wrong!"})
+        app.logger.info("Trying to create existing directory")
+        error = "Folder already exists"
+        return jsonify({"success": False, "error": error}), 409
+    except Exception as e:
+        app.logger.info("Error in making a directory: %s", e)
+        return jsonify({"success": False, "error": "Internal Server Error"})

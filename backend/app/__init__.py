@@ -2,6 +2,32 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from logging.config import dictConfig
+
+
+dictConfig(
+    {
+        "version": 1,
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
+            }
+        },
+        "handlers": {
+            "wsgi": {
+                "class": "logging.StreamHandler",
+                "stream": "ext://flask.logging.wsgi_errors_stream",
+                "formatter": "default",
+            },
+            "file": {
+                "class": "logging.FileHandler",
+                "formatter": "default",
+                "filename": "spam.log",
+            },
+        },
+        "root": {"level": "INFO", "handlers": ["wsgi", "file"]},
+    }
+)
 
 
 app = Flask(__name__)
