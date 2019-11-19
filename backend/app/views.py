@@ -50,7 +50,7 @@ def create_user():
 
     account = Account(email, password)
     # TODO: use os.path join
-    home = Folder("home", email + '/', account.id)
+    home = Folder("home", email + "/", account.id)
     account.folders.append(home)
     db.session.add(account)
     db.session.commit()
@@ -139,13 +139,14 @@ def upload_file(user, folderId):
             filename = file.filename
             userObject = Account.query.filter(Account.email == user).first()
             folderObject = Folder.query.filter(Folder.id == folderId).first()
-            dirPath = os.path.join(uploads, user, folderObject.path)
+            dirPath = os.path.join(uploads, folderObject.path)
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
             fullPath = os.path.join(dirPath, filename)
-            appPath = os.path.join(user, folderObject.path, filename)
+            appPath = os.path.join(folderObject.path, filename)
             file.save(fullPath)
-            dbFile = StoredFile(userObject.id, userObject.email, appPath, filename)
+            dbFile = StoredFile(
+                userObject.id, userObject.email, appPath, filename)
             userObject.files.append(dbFile)
             folderObject.files.append(dbFile)
             db.session.add(dbFile)
@@ -193,8 +194,10 @@ def rename_file(user, id):
         storedFile.name = newName
         storedFile.path = newPath
         StoredFile.modified = db.func.current_timestamp()
-        oldFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
-        newFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], newPath)
+        oldFullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
+        newFullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], newPath)
         os.rename(oldFullPath, newFullPath)
         db.session.add(storedFile)
         db.session.commit()
@@ -210,7 +213,8 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(
+            FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     return jsonify(fileDicts)
@@ -224,8 +228,7 @@ def create_folder(user):
         if path.startswith("/"):
             path = path[1:]
         fullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], user, path, name
-        )
+            app.root_path, app.config["UPLOAD_FOLDER"], path, name)
         os.makedirs(fullPath)
         appPath = os.path.join(path, name)
         folder = Folder(name, appPath, user)
