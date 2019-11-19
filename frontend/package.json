@@ -9,7 +9,8 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack",
     "watch": "./node_modules/.bin/webpack --watch",
-    "start": "./node_modules/.bin/webpack-dev-server --open"
+    "start": "./node_modules/.bin/webpack-dev-server --open",
+    "deploy": "./node_modules/.bin/webpack && mv dist ../backend/app/dist"
   },
   "dependencies": {
     "@babel/preset-env": "^7.7.1",

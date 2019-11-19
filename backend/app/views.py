@@ -22,7 +22,12 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    return jsonify({"json": True})
+    return send_from_directory("dist", "index.html")
+
+
+@app.route("/dist.bundle.js")
+def bundle():
+    return send_from_directory("dist", "dist.bundle.js")
 
 
 @app.route("/api/user", methods=["POST"])
@@ -194,7 +199,7 @@ def rename_file(user, id):
         db.session.add(storedFile)
         db.session.commit()
         db.engine.dispose()
-        app.logger.info('Renamed %s to %s', oldPath, newPath)
+        app.logger.info("Renamed %s to %s", oldPath, newPath)
     except Exception as e:
         app.logger.info("Internal Server Error in renaming a file: %s", e)
         error = "Internal Server Error"
@@ -237,7 +242,7 @@ def createFolder(user):
         db.session.add(folder)
         db.session.commit()
         db.engine.dispose()
-        app.logger.info('Created folder %s.', folder.path)
+        app.logger.info("Created folder %s.", folder.path)
         return jsonify({"success": True})
     except FileExistsError:
         app.logger.info("Trying to create existing directory")
