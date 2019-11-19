@@ -63,18 +63,18 @@ const getFiles = user => {
     return request(`/api/${user}/files`);
 };
 
-const uploadFile = (user, file) => {
+const uploadFile = (user, folder, file) => {
     const formData = new FormData();
     formData.append('file', file);
-    return request(`/api/${user}/files`, 'POST', formData, empty, false);
+    return request(`/api/${user}/files/${folder}`, 'POST', formData, empty, false);
 };
 
 const deleteFile = (user, id) => {
-    return request(`/api/${user}/files/${id}`, 'DELETE', {user, id});
+    return request(`/api/${user}/file/${id}`, 'DELETE', {user, id});
 };
 
-const renameFile = (user, id) => {
-    return request(`/api/${user}/files/${id}`, 'PUT', {user, id});
+const renameFile = (user, id, name) => {
+    return request(`/api/${user}/file/${id}`, 'PUT', {user, id, name});
 };
 
 const getSharedFiles = user => {

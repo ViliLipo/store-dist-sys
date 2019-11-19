@@ -13,7 +13,8 @@ function HomePage(props) {
     }, []);
 
     const submit = values => {
-        api.files.uploadFile(props.user, values.file).then(response => {
+        const homeFolderId = props.files[0].id
+        api.files.uploadFile(props.user, homeFolderId, values.file).then(response => {
             if (response.success) {
                 // TODO: if there's time, add error handling.
                 // Refresh the file list after uploading a new file.
