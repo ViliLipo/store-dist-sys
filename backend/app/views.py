@@ -144,8 +144,7 @@ def upload_file(user, folderId):
             fullPath = os.path.join(dirPath, filename)
             appPath = os.path.join(user, folderObject.path, filename)
             file.save(fullPath)
-            dbFile = StoredFile(
-                userObject.id, userObject.email, appPath, filename)
+            dbFile = StoredFile(userObject.id, userObject.email, appPath, filename)
             userObject.files.append(dbFile)
             folderObject.files.append(dbFile)
             db.session.add(dbFile)
@@ -193,10 +192,8 @@ def rename_file(user, id):
         storedFile.name = newName
         storedFile.path = newPath
         StoredFile.modified = db.func.current_timestamp()
-        oldFullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
-        newFullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], newPath)
+        oldFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
+        newFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], newPath)
         os.rename(oldFullPath, newFullPath)
         db.session.add(storedFile)
         db.session.commit()
@@ -212,15 +209,14 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(
-            FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     return jsonify(fileDicts)
 
 
 @app.route("/api/<user>/folder/new", methods=["POST"])
-def createFolder(user):
+def create_folder(user):
     try:
         name = request.json["name"]
         path = request.json["path"]
@@ -233,11 +229,13 @@ def createFolder(user):
         folder = Folder(name, path, user)
         owner = Account.query.filter(Account.email == user).first()
         owner.folders.append(folder)
+
         parent = (
             Folder.query.filter(Folder.userId == owner.id)
             .filter(Folder.path == path)
             .first()
         )
+
         if parent:
             parent.subfolders.append(folder)
         db.session.add(owner)

@@ -1,7 +1,14 @@
 import {combineReducers} from 'redux';
 import {reducer as formReducer} from 'redux-form';
 
-import {auth, user, files, notification} from 'core/redux/reducers';
+import {
+    auth,
+    user,
+    files,
+    notification,
+    structure,
+    modal,
+} from 'core/redux/reducers';
 
 export default combineReducers({
     form: formReducer,
@@ -9,4 +16,6 @@ export default combineReducers({
     user,
     files,
     notification,
+    structure,
+    modal,
 });

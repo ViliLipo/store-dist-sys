@@ -6,6 +6,8 @@ import LoginPage from 'components/pages/LoginPage';
 import HomePage from 'components/pages/HomePage';
 import RegistrationPage from 'components/pages/RegistrationPage';
 
+// TODO: Should be eventually refactored. All the props could be separated into
+// data and actions or something similar.
 function Router(props) {
     return (
         <Switch>
@@ -15,11 +17,15 @@ function Router(props) {
                     props.isAuthorized ? (
                         <HomePage
                             user={props.username}
+                            structure={props.structure}
                             removeUsername={props.removeUsername}
                             showNotification={props.showNotification}
+                            setStructure={props.setStructure}
                             setFiles={props.setFiles}
                             files={props.files}
                             logout={props.removeAuthorization}
+                            openModal={props.openModal}
+                            closeModal={props.closeModal}
                         />
                     ) : (
                         <Redirect

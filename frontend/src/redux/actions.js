@@ -6,6 +6,9 @@ import {
     SET_FILES,
     SHOW_NOTIFICATION,
     HIDE_NOTIFICATION,
+    SET_STRUCTURE,
+    OPEN_MODAL,
+    CLOSE_MODAL,
 } from './actionTypes';
 
 // This file should be split into separate files if it gets big enough.
@@ -55,5 +58,27 @@ export const hideNotification = () => ({
     type: HIDE_NOTIFICATION,
     payload: {
         text: '',
+    },
+});
+
+export const setStructure = structure => ({
+    type: SET_STRUCTURE,
+    payload: {
+        ...structure,
+    },
+});
+
+export const openModal = data => ({
+    type: OPEN_MODAL,
+    payload: {
+        ...data,
+    },
+});
+
+export const closeModal = type => ({
+    type: CLOSE_MODAL,
+    payload: {
+        isOpen: false,
+        type,
     },
 });

@@ -12,3 +12,10 @@ export const SET_FILES = 'SET_FILES';
 // Notifications
 export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
 export const HIDE_NOTIFICATION = 'HIDE_NOTIFICATION';
+
+// Filesystem structure.
+export const SET_STRUCTURE = 'SET_STRUCTURE';
+
+// Modal related data.
+export const OPEN_MODAL = 'OPEN_MODAL';
+export const CLOSE_MODAL = 'CLOSE_MODAL';

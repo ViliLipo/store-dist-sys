@@ -36,6 +36,7 @@ const request = (
             return response.json();
         })
         .then(response => {
+            console.log(response);
             if (response.success) {
                 return response;
             } else {
@@ -66,7 +67,13 @@ const getFiles = user => {
 const uploadFile = (user, folder, file) => {
     const formData = new FormData();
     formData.append('file', file);
-    return request(`/api/${user}/files/${folder}`, 'POST', formData, empty, false);
+    return request(
+        `/api/${user}/files/${folder}`,
+        'POST',
+        formData,
+        empty,
+        false,
+    );
 };
 
 const deleteFile = (user, id) => {
@@ -75,6 +82,10 @@ const deleteFile = (user, id) => {
 
 const renameFile = (user, id, name) => {
     return request(`/api/${user}/file/${id}`, 'PUT', {user, id, name});
+};
+
+const createFolder = (user, name, path) => {
+    return request(`/api/${user}/folder/new`, 'POST', {name, path});
 };
 
 const getSharedFiles = user => {
@@ -100,6 +111,9 @@ const api = {
         uploadFile,
         deleteFile,
         renameFile,
+    },
+    directories: {
+        createFolder,
     },
     sharing: {
         getSharedFiles,
