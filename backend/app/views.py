@@ -76,6 +76,8 @@ def delete_user():
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     form = request.json["email"]
+    if not form:
+        return jsonify({"success": False, "error": "Specify username and Password"})
 
     email = form["username"]
     if not email:
