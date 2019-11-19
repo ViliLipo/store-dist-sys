@@ -18,8 +18,6 @@ function HomePage(props) {
             .uploadFile(props.user, homeFolderId, values.file)
             .then(response => {
                 if (response.success) {
-                    // TODO: if there's time, add error handling.
-                    // Refresh the file list after uploading a new file.
                     api.files.getFiles(props.user).then(files => {
                         props.setStructure(files[0]);
                     });
@@ -40,10 +38,20 @@ function HomePage(props) {
     };
 
     const submitModal = values => {
+        const path = `${props.location.pathname.replace(
+            /home/gi,
+            props.user,
+        )}/`;
         api.directories
-            .createFolder(props.user, values.name, `${props.user}/`) // Should add + location
+            .createFolder(props.user, values.name, path)
             .then(response => {
-                console.log('response:', response);
+                if (response.success) {
+                    api.files.getFiles(props.user).then(files => {
+                        props.setStructure(files[0]);
+                    });
+                } else {
+                    props.showNotification(response.message);
+                }
             });
     };
 
@@ -51,7 +59,11 @@ function HomePage(props) {
         <div>
             <h3>Distributed Systems 2019</h3>
             <table>
-                <Structure user={props.user} structure={props.structure} />
+                <Structure
+                    user={props.user}
+                    structure={props.structure}
+                    location={props.location}
+                />
             </table>
             <UploadFileForm onSubmit={upload} />
             <button

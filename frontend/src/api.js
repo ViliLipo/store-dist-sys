@@ -36,7 +36,6 @@ const request = (
             return response.json();
         })
         .then(response => {
-            console.log(response);
             if (response.success) {
                 return response;
             } else {

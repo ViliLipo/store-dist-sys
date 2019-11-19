@@ -12,6 +12,7 @@ function File(props) {
         });
     };
 
+    // TODO: Update the file list after deleting an item.
     const deleteFile = id => {
         api.files.deleteFile(props.user, id).then(response => {
             console.log(response);
