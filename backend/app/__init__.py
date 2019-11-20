@@ -5,6 +5,7 @@ from flask_cors import CORS
 from logging.config import dictConfig
 
 
+print("INIT")
 dictConfig(
     {
         "version": 1,
@@ -51,6 +52,7 @@ db.create_all()
 
 # Adds one test object to the database
 try:
+    print("YOLO")
     userOne = models.Account("teppo.tamminen@junkmail.io", "verysolidpassword")
     userTwo = models.Account("jarkko.k@trashpost.co", "verysolidpassword")
     db.session.add(userOne)

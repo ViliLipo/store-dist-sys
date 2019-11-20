@@ -22,6 +22,7 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
+    app.logger.info("sent index")
     return send_from_directory("dist", "index.html")
 
 
