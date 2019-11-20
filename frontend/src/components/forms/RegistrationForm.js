@@ -24,7 +24,7 @@ function RegistrationForm(props) {
                     validate={required}
                 />
             </div>
-            <button>login</button>
+            <button className="button button-primary">register</button>
         </form>
     );
 }

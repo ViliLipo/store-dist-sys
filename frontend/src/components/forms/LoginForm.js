@@ -24,7 +24,7 @@ function LoginForm(props) {
                     validate={required}
                 />
             </div>
-            <button className="button-primary">login</button>
+            <button className="button button-primary">login</button>
         </form>
     );
 }

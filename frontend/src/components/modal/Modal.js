@@ -21,7 +21,7 @@ function Modal(props) {
             {isOpen !== 0 && (
                 <div>
                     <TypeModal onSubmit={properties.submitModal} />
-                    <button onClick={closeModal}>Hide</button>
+                    <button className="button" onClick={closeModal}>Hide</button>
                 </div>
             )}
         </div>

@@ -15,7 +15,7 @@ function CreateFolderForm(props) {
                     validate={required}
                 />
             </div>
-            <button type="submit">Create</button>
+            <button className="button button-primary" type="submit">Create</button>
         </form>
     );
 }

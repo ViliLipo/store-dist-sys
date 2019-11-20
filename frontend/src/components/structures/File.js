@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import FontAwesomeIcon from 'react-fontawesome'
 
 import api from 'core/api';
 import {url} from 'core/config';
@@ -35,21 +36,21 @@ function File(props) {
             <td>{props.file.path}</td>
             <td>
                 <button
-                    className="button-primary"
+                    className="button"
                     onClick={() => renameFile(props.file.id)}>
-                    Rename
+                    <FontAwesomeIcon name="pen"/> Rename
                 </button>
             </td>
             <td>
-                <a download={props.file.name} href={href} target="_blank">
-                    Download
+                <a className="button" download={props.file.name} href={href} target="_blank">
+                    <FontAwesomeIcon name="download"/> Download
                 </a>
             </td>
             <td>
                 <button
-                    className="button-primary"
+                    className="button"
                     onClick={() => deleteFile(props.file.id)}>
-                    Delete
+                    <FontAwesomeIcon name="trash"/> Delete
                 </button>
             </td>
         </tr>
