@@ -8,7 +8,7 @@ import {
     notification,
     structure,
     modal,
-    location,
+    folder,
 } from 'core/redux/reducers';
 
 export default combineReducers({
@@ -19,5 +19,5 @@ export default combineReducers({
     notification,
     structure,
     modal,
-    location,
+    folder,
 });

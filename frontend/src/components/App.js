@@ -42,7 +42,7 @@ const mapStateToProps = state => {
         text: state.notification.text,
         structure: state.structure,
         modal: state.modal,
-        location: state.location,
+        folder: state.folder,
     };
 };
 

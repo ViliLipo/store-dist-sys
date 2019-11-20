@@ -30,6 +30,7 @@ function Router(props) {
                             openModal={props.openModal}
                             closeModal={props.closeModal}
                             location={location}
+                            folder={props.folder}
                         />
                     ) : (
                         <Redirect

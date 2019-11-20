@@ -4,6 +4,6 @@ import files from './files';
 import notification from './notification';
 import structure from './structure';
 import modal from './modal';
-import location from './location';
+import folder from './folder';
 
-export {auth, user, files, notification, structure, modal, location};
+export {auth, user, files, notification, structure, modal, folder};

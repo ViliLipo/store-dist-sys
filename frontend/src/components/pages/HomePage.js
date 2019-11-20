@@ -13,9 +13,8 @@ function HomePage(props) {
     }, []);
 
     const upload = values => {
-        const homeFolderId = props.structure.id;
         api.files
-            .uploadFile(props.user, props.location.id, values.file)
+            .uploadFile(props.user, props.folder.id, values.file)
             .then(response => {
                 if (response.success) {
                     api.files.getFiles(props.user).then(files => {
@@ -63,6 +62,7 @@ function HomePage(props) {
                     user={props.user}
                     structure={props.structure}
                     location={props.location}
+                    folder={props.folder}
                     setCurrentId={props.setCurrentId}
                 />
             </table>
