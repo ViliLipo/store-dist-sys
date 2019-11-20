@@ -14,8 +14,7 @@ export default function(state = initialState, action) {
         }
         case REMOVE_USERNAME: {
             return {
-                ...state,
-                ...action.payload,
+                ...initialState,
             };
         }
         default:

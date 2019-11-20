@@ -16,6 +16,7 @@ import {
     setStructure,
     openModal,
     closeModal,
+    setCurrentId,
 } from 'core/redux/actions';
 
 function App(props) {
@@ -41,6 +42,7 @@ const mapStateToProps = state => {
         text: state.notification.text,
         structure: state.structure,
         modal: state.modal,
+        location: state.location,
     };
 };
 
@@ -55,4 +57,5 @@ export default connect(mapStateToProps, {
     setStructure,
     openModal,
     closeModal,
+    setCurrentId,
 })(App);

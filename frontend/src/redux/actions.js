@@ -9,6 +9,7 @@ import {
     SET_STRUCTURE,
     OPEN_MODAL,
     CLOSE_MODAL,
+    SET_CURRENT_ID,
 } from './actionTypes';
 
 // This file should be split into separate files if it gets big enough.
@@ -80,5 +81,12 @@ export const closeModal = type => ({
     payload: {
         isOpen: false,
         type,
+    },
+});
+
+export const setCurrentId = id => ({
+    type: SET_CURRENT_ID,
+    payload: {
+        id,
     },
 });

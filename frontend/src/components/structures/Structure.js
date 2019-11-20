@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import {useRouteMatch, useParams} from 'react-router-dom';
 
 import Files from 'components/structures/Files';
 import Folders from 'components/structures/Folders';
@@ -32,6 +31,8 @@ function Structure(props) {
         // This will not work with paths that contain whitespace between words.
         // TODO: Add validation to the directory name.
         const current = props.location.pathname.split(/[\/ ]+/).pop();
+        const currentObject = searchForObject(props.structure, current);
+        props.setCurrentId(currentObject.id);
         setFiles(searchForObject(props.structure, current));
     }, [props.structure, props.location, files]);
 

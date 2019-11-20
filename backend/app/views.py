@@ -109,9 +109,7 @@ def list_files(user):
 def download_file(user, id, folderId):
     f = StoredFile.query.filter(StoredFile.id == id).first()
     print(f.folder.path)
-    uploads = os.path.join(
-        app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path
-    )
+    uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path)
     return send_from_directory(directory=uploads, filename=f.name)
 
 
@@ -133,8 +131,7 @@ def upload_file(user, folderId):
             fullPath = os.path.join(dirPath, filename)
             appPath = os.path.join(folderObject.path, filename)
             file.save(fullPath)
-            dbFile = StoredFile(
-                userObject.id, userObject.email, appPath, filename)
+            dbFile = StoredFile(userObject.id, userObject.email, appPath, filename)
             userObject.files.append(dbFile)
             folderObject.files.append(dbFile)
             db.session.add(dbFile)
@@ -182,10 +179,8 @@ def rename_file(user, id):
         storedFile.name = newName
         storedFile.path = newPath
         StoredFile.modified = db.func.current_timestamp()
-        oldFullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
-        newFullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], newPath)
+        oldFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
+        newFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], newPath)
         os.rename(oldFullPath, newFullPath)
         db.session.add(storedFile)
         db.session.commit()
@@ -201,8 +196,7 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(
-            FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     return jsonify(fileDicts)
@@ -218,8 +212,7 @@ def create_folder(user):
             path = path[1:]
         if path.endswith("/"):
             path = path[:-1]
-        fullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], path, name)
+        fullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], path, name)
         os.makedirs(fullPath)
         appPath = os.path.join(path, name)
         folder = Folder(name, appPath, user)

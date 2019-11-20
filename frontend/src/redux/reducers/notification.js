@@ -17,8 +17,7 @@ export default function(state = initialState, action) {
         }
         case HIDE_NOTIFICATION: {
             return {
-                ...state,
-                text: '',
+                ...initialState,
             };
         }
         default:

@@ -24,6 +24,7 @@ function Router(props) {
                             showNotification={props.showNotification}
                             setStructure={props.setStructure}
                             setFiles={props.setFiles}
+                            setCurrentId={props.setCurrentId}
                             files={props.files}
                             logout={props.removeAuthorization}
                             openModal={props.openModal}

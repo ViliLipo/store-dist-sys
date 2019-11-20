@@ -19,3 +19,6 @@ export const SET_STRUCTURE = 'SET_STRUCTURE';
 // Modal related data.
 export const OPEN_MODAL = 'OPEN_MODAL';
 export const CLOSE_MODAL = 'CLOSE_MODAL';
+
+// Location tracking for file uploading.
+export const SET_CURRENT_ID = 'SET_CURRENT_ID';

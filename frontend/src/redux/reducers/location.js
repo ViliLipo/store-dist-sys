@@ -1,22 +1,16 @@
-import {OPEN_MODAL, CLOSE_MODAL} from './../actionTypes';
+import {SET_CURRENT_ID} from './../actionTypes';
 
+// 2 is considered the root location.
 const initialState = {
-    isOpen: false,
-    type: null,
-    properties: {},
+    id: 2,
 };
 
 export default function(state = initialState, action) {
     switch (action.type) {
-        case OPEN_MODAL: {
+        case SET_CURRENT_ID: {
             return {
                 ...state,
                 ...action.payload,
-            };
-        }
-        case CLOSE_MODAL: {
-            return {
-                ...initialState,
             };
         }
         default:
