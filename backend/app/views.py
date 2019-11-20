@@ -35,9 +35,6 @@ def create_user():
     form = request.json["email"]
 
     email = form["username"]
-    # TODO: The form validation should be handled in frontend.
-    if not email:
-        return jsonify({"success": False, "error": "Specify username"})
 
     existing = Account.query.filter_by(email=email).first()
     if existing:
@@ -45,9 +42,6 @@ def create_user():
         return jsonify({"success": False, "error": "User already exists"}), 409
 
     password = form["password"]
-    if not password:
-        return jsonify({"success": False, "error": "Specify a password"})
-
     account = Account(email, password)
     # TODO: use os.path join
     home = Folder("home", email, account.id)
@@ -77,17 +71,8 @@ def delete_user():
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     form = request.json["email"]
-    if not form:
-        return jsonify({"success": False, "error": "Specify username and Password"})
-
     email = form["username"]
-    if not email:
-        return jsonify({"success": False, "error": "Specify username"})
-
     password = form["password"]
-    if not password:
-        return jsonify({"success": False, "error": "Specify a password"})
-
     account = Account.query.filter_by(email=email).first()
 
     if not account:
@@ -123,8 +108,9 @@ def list_files(user):
 @login_required
 def download_file(user, id, folderId):
     f = StoredFile.query.filter(StoredFile.id == id).first()
+    print(f.folder.path)
     uploads = os.path.join(
-        app.root_path, app.config["UPLOAD_FOLDER"], f.path.strip(f.name)
+        app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path
     )
     return send_from_directory(directory=uploads, filename=f.name)
 

@@ -1,7 +1,9 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 import api from 'core/api';
 import {url} from 'core/config';
+import {setStructure, showNotification} from 'core/redux/actions';
 
 function File(props) {
     // These functions should be moved out of this file.
@@ -15,7 +17,13 @@ function File(props) {
     // TODO: Update the file list after deleting an item.
     const deleteFile = id => {
         api.files.deleteFile(props.user, id).then(response => {
-            console.log(response);
+            if (response.success) {
+                api.files.getFiles(props.user).then(files => {
+                    props.setStructure(files[0]);
+                });
+            } else {
+                props.showNotification(response.message);
+            }
         });
     };
 
@@ -44,4 +52,7 @@ function File(props) {
     );
 }
 
-export default File;
+export default connect(null, {
+    setStructure,
+    showNotification,
+})(File);
