@@ -25,7 +25,9 @@ function App(props) {
                 hideNotification={props.hideNotification}
                 text={props.text}
             />
-            <Modal data={props.modal} closeModal={props.closeModal} />
+            {props.isAuthorized && (
+                <Modal data={props.modal} closeModal={props.closeModal} />
+            )}
             <Router {...props} />
         </>
     );
