@@ -35,9 +35,6 @@ def create_user():
     form = request.json["email"]
 
     email = form["username"]
-    # TODO: The form validation should be handled in frontend.
-    if not email:
-        return jsonify({"success": False, "error": "Specify username"})
 
     existing = Account.query.filter_by(email=email).first()
     if existing:
@@ -45,11 +42,9 @@ def create_user():
         return jsonify({"success": False, "error": "User already exists"}), 409
 
     password = form["password"]
-    if not password:
-        return jsonify({"success": False, "error": "Specify a password"})
-
     account = Account(email, password)
-    home = Folder("home", "", account.id)
+    # TODO: use os.path join
+    home = Folder("home", email, account.id)
     account.folders.append(home)
     db.session.add(account)
     db.session.commit()
@@ -76,17 +71,8 @@ def delete_user():
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     form = request.json["email"]
-    if not form:
-        return jsonify({"success": False, "error": "Specify username and Password"})
-
     email = form["username"]
-    if not email:
-        return jsonify({"success": False, "error": "Specify username"})
-
     password = form["password"]
-    if not password:
-        return jsonify({"success": False, "error": "Specify a password"})
-
     account = Account.query.filter_by(email=email).first()
 
     if not account:
@@ -114,6 +100,7 @@ def logout():
 def list_files(user):
     folders = Account.query.filter(Account.email == user).first().folders
     folderDicts = list(map(lambda f: f.toDict(), folders))
+    print(folderDicts)
     return jsonify(folderDicts)
 
 
@@ -121,9 +108,8 @@ def list_files(user):
 @login_required
 def download_file(user, id, folderId):
     f = StoredFile.query.filter(StoredFile.id == id).first()
-    uploads = os.path.join(
-        app.root_path, app.config["UPLOAD_FOLDER"], f.path.strip(f.name)
-    )
+    print(f.folder.path)
+    uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path)
     return send_from_directory(directory=uploads, filename=f.name)
 
 
@@ -138,14 +124,14 @@ def upload_file(user, folderId):
             filename = file.filename
             userObject = Account.query.filter(Account.email == user).first()
             folderObject = Folder.query.filter(Folder.id == folderId).first()
-            dirPath = os.path.join(uploads, user, folderObject.path)
+            print(folderObject.name, folderObject.id)
+            dirPath = os.path.join(uploads, folderObject.path)
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
             fullPath = os.path.join(dirPath, filename)
-            appPath = os.path.join(user, folderObject.path, filename)
+            appPath = os.path.join(folderObject.path, filename)
             file.save(fullPath)
-            dbFile = StoredFile(
-                userObject.id, userObject.email, appPath, filename)
+            dbFile = StoredFile(userObject.id, userObject.email, appPath, filename)
             userObject.files.append(dbFile)
             folderObject.files.append(dbFile)
             db.session.add(dbFile)
@@ -193,10 +179,8 @@ def rename_file(user, id):
         storedFile.name = newName
         storedFile.path = newPath
         StoredFile.modified = db.func.current_timestamp()
-        oldFullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
-        newFullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], newPath)
+        oldFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
+        newFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], newPath)
         os.rename(oldFullPath, newFullPath)
         db.session.add(storedFile)
         db.session.commit()
@@ -212,25 +196,26 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(
-            FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     return jsonify(fileDicts)
 
 
 @app.route("/api/<user>/folder/new", methods=["POST"])
-def createFolder(user):
+def create_folder(user):
     try:
         name = request.json["name"]
         path = request.json["path"]
+        print(path)
         if path.startswith("/"):
             path = path[1:]
-        fullPath = os.path.join(
-            app.root_path, app.config["UPLOAD_FOLDER"], user, path, name
-        )
+        if path.endswith("/"):
+            path = path[:-1]
+        fullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], path, name)
         os.makedirs(fullPath)
-        folder = Folder(name, path, user)
+        appPath = os.path.join(path, name)
+        folder = Folder(name, appPath, user)
         owner = Account.query.filter(Account.email == user).first()
         owner.folders.append(folder)
         parent = (
@@ -238,12 +223,13 @@ def createFolder(user):
             .filter(Folder.path == path)
             .first()
         )
-        if parent:
-            parent.subfolders.append(folder)
-        db.session.add(owner)
+        if parent is not None:
+            folder.parent = parent
         db.session.add(folder)
+        db.session.add(owner)
         db.session.commit()
         db.engine.dispose()
+        print(folder.toDict())
         app.logger.info("Created folder %s.", folder.path)
         return jsonify({"success": True})
     except FileExistsError:

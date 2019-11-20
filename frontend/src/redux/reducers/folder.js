@@ -1,20 +1,16 @@
-import {ADD_USERNAME, REMOVE_USERNAME} from './../actionTypes';
+import {SET_CURRENT_ID} from './../actionTypes';
 
+// 2 is considered the root location.
 const initialState = {
-    username: null,
+    id: 2,
 };
 
 export default function(state = initialState, action) {
     switch (action.type) {
-        case ADD_USERNAME: {
+        case SET_CURRENT_ID: {
             return {
                 ...state,
                 ...action.payload,
-            };
-        }
-        case REMOVE_USERNAME: {
-            return {
-                ...initialState,
             };
         }
         default:
