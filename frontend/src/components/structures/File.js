@@ -34,7 +34,7 @@ function File(props) {
             <td>{props.file.name}</td>
             <td>{props.file.path}</td>
             <td>
-                <button onClick={() => renameFile(props.file.id)}>
+                <button className="button-primary" onClick={() => renameFile(props.file.id)}>
                     Rename
                 </button>
             </td>
@@ -44,7 +44,7 @@ function File(props) {
                 </a>
             </td>
             <td>
-                <button onClick={() => deleteFile(props.file.id)}>
+                <button className="button-primary" onClick={() => deleteFile(props.file.id)}>
                     Delete
                 </button>
             </td>

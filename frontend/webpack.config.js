@@ -28,6 +28,14 @@ module.exports = {
                         loader: 'html-loader'
                     }
                 ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: 'css-loader'
+                    }
+                ]
             }
         ]
     },
