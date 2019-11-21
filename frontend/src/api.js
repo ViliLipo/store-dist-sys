@@ -79,10 +79,6 @@ const deleteFile = (user, id) => {
     return request(`/api/${user}/file/${id}`, 'DELETE', {user, id});
 };
 
-const renameFile = (user, id, name) => {
-    return request(`/api/${user}/file/${id}`, 'PUT', {user, id, name});
-};
-
 const createFolder = (user, name, path) => {
     return request(`/api/${user}/folder/new`, 'POST', {name, path});
 };
@@ -109,7 +105,6 @@ const api = {
         getFiles,
         uploadFile,
         deleteFile,
-        renameFile,
     },
     directories: {
         createFolder,
