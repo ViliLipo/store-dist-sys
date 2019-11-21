@@ -57,15 +57,21 @@ function HomePage(props) {
     return (
         <div>
             <h3>Distributed Systems 2019</h3>
-            <table>
-                <Structure
-                    user={props.user}
-                    structure={props.structure}
-                    location={props.location}
-                    folder={props.folder}
-                    setCurrentId={props.setCurrentId}
-                />
-            </table>
+            {props.structure.files.length !== 0 ||
+            props.structure.subfolders.length !== 0 ? (
+                <table>
+                    <Structure
+                        user={props.user}
+                        structure={props.structure}
+                        location={props.location}
+                        folder={props.folder}
+                        setCurrentId={props.setCurrentId}
+                    />
+                </table>
+            ) : (
+                <h4>The user has no folders or files uploaded</h4>
+            )}
+
             <UploadFileForm onSubmit={upload} />
             <button
                 onClick={() =>
