@@ -20,6 +20,12 @@ def load_user(user_id):
     return account
 
 
+"""
+Index, bundle and css endpoints
+serve the Single page app to the browser
+"""
+
+
 @app.route("/")
 def index():
     app.logger.info("sent index")
@@ -40,6 +46,9 @@ def css():
 
 @app.route("/api/user", methods=["POST"])
 def create_user():
+    """"
+    This endpoint is for creating new user
+    """
     form = request.json["email"]
 
     email = form["username"]
@@ -51,7 +60,6 @@ def create_user():
 
     password = form["password"]
     account = Account(email, password)
-    # TODO: use os.path join
     home = Folder("home", email, account.id)
     account.folders.append(home)
     db.session.add(account)
@@ -68,12 +76,6 @@ def create_user():
     app.logger.info("Account: %s created", account.email)
 
     return jsonify({"success": True, "user_id": registered.id})
-
-
-@app.route("/api/user", methods=["DELETE"])
-def delete_user():
-    # TODO delete a user (log them out if it's current user)
-    return jsonify({"success": True})
 
 
 @app.route("/api/auth/login", methods=["POST"])
@@ -106,6 +108,10 @@ def logout():
 @app.route("/api/<user>/files")
 @login_required
 def list_files(user):
+    """
+    Get a JSON structure depicting
+    the folders owned by the user
+    """
     folders = Account.query.filter(Account.email == user).first().folders
     folderDicts = list(map(lambda f: f.toDict(), folders))
     return jsonify(folderDicts)
@@ -114,6 +120,9 @@ def list_files(user):
 @app.route("/api/<user>/files/<folderId>/<id>")
 @login_required
 def download_file(user, id, folderId):
+    """
+    Send file identified by folderId and id to a requester
+    """
     f = StoredFile.query.filter(StoredFile.id == id).first()
     uploads = os.path.join(
         app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path)
@@ -121,7 +130,7 @@ def download_file(user, id, folderId):
 
 
 @app.route("/api/<user>/files/<folderId>", methods=["POST"])
-# @login_required
+@login_required
 def upload_file(user, folderId):
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"])
     file = None
