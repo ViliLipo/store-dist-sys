@@ -108,7 +108,6 @@ def logout():
 def list_files(user):
     folders = Account.query.filter(Account.email == user).first().folders
     folderDicts = list(map(lambda f: f.toDict(), folders))
-    print(folderDicts)
     return jsonify(folderDicts)
 
 
@@ -116,7 +115,6 @@ def list_files(user):
 @login_required
 def download_file(user, id, folderId):
     f = StoredFile.query.filter(StoredFile.id == id).first()
-    print(f.folder.path)
     uploads = os.path.join(
         app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path)
     return send_from_directory(directory=uploads, filename=f.name)
@@ -133,7 +131,6 @@ def upload_file(user, folderId):
             filename = file.filename
             userObject = Account.query.filter(Account.email == user).first()
             folderObject = Folder.query.filter(Folder.id == folderId).first()
-            print(folderObject.name, folderObject.id)
             dirPath = os.path.join(uploads, folderObject.path)
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
@@ -220,7 +217,6 @@ def create_folder(user):
     try:
         name = request.json["name"]
         path = request.json["path"]
-        print(path)
         if path.startswith("/"):
             path = path[1:]
         if path.endswith("/"):
@@ -243,7 +239,6 @@ def create_folder(user):
         db.session.add(owner)
         db.session.commit()
         db.engine.dispose()
-        print(folder.toDict())
         app.logger.info("Created folder %s.", folder.path)
         return jsonify({"success": True})
     except FileExistsError:

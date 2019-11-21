@@ -129,5 +129,4 @@ class StoredFile(db.Model):
             sha.update(data)
         value = sha.hexdigest()
         f.close()
-        print(value)
         return value

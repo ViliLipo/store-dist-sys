@@ -6,7 +6,6 @@ from logging.config import dictConfig
 import os
 
 
-print("INIT")
 dictConfig(
     {
         "version": 1,
@@ -31,7 +30,6 @@ dictConfig(
     }
 )
 
-# TODO: set cors origin so that docker works
 app = Flask(__name__)
 CORS(
     app,
@@ -57,7 +55,6 @@ db.create_all()
 
 # Adds one test object to the database
 try:
-    print("YOLO")
     userOne = models.Account("teppo.tamminen@junkmail.io", "verysolidpassword")
     userTwo = models.Account("jarkko.k@trashpost.co", "verysolidpassword")
     db.session.add(userOne)
@@ -70,6 +67,5 @@ try:
     db.session.commit()
     db.engine.dispose()
 except Exception:
-    print("rollback")
     db.session.rollback()
     db.engine.dispose()
