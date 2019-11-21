@@ -20,8 +20,17 @@ def load_user(user_id):
     return account
 
 
+"""
+Index, bundle and css endpoints
+serve the Single page app to the browser
+"""
+
+
 @app.route("/")
 def index():
+    app.logger.info("sent index")
+    app.logger.info(os.environ.get("DATABASE_URI"))
+    app.logger.info(os.environ.get("PRODUCTION"))
     return send_from_directory("dist", "index.html")
 
 
@@ -30,8 +39,16 @@ def bundle():
     return send_from_directory("dist", "dist.bundle.js")
 
 
+@app.route("/main.css")
+def css():
+    return send_from_directory("dist", "main.css")
+
+
 @app.route("/api/user", methods=["POST"])
 def create_user():
+    """"
+    This endpoint is for creating new user
+    """
     form = request.json["email"]
 
     email = form["username"]
@@ -43,7 +60,6 @@ def create_user():
 
     password = form["password"]
     account = Account(email, password)
-    # TODO: use os.path join
     home = Folder("home", email, account.id)
     account.folders.append(home)
     db.session.add(account)
@@ -60,12 +76,6 @@ def create_user():
     app.logger.info("Account: %s created", account.email)
 
     return jsonify({"success": True, "user_id": registered.id})
-
-
-@app.route("/api/user", methods=["DELETE"])
-def delete_user():
-    # TODO delete a user (log them out if it's current user)
-    return jsonify({"success": True})
 
 
 @app.route("/api/auth/login", methods=["POST"])
@@ -98,23 +108,29 @@ def logout():
 @app.route("/api/<user>/files")
 @login_required
 def list_files(user):
+    """
+    Get a JSON structure depicting
+    the folders owned by the user
+    """
     folders = Account.query.filter(Account.email == user).first().folders
     folderDicts = list(map(lambda f: f.toDict(), folders))
-    print(folderDicts)
     return jsonify(folderDicts)
 
 
 @app.route("/api/<user>/files/<folderId>/<id>")
 @login_required
 def download_file(user, id, folderId):
+    """
+    Send file identified by folderId and id to a requester
+    """
     f = StoredFile.query.filter(StoredFile.id == id).first()
-    print(f.folder.path)
-    uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path)
+    uploads = os.path.join(
+        app.root_path, app.config["UPLOAD_FOLDER"], f.folder.path)
     return send_from_directory(directory=uploads, filename=f.name)
 
 
 @app.route("/api/<user>/files/<folderId>", methods=["POST"])
-# @login_required
+@login_required
 def upload_file(user, folderId):
     uploads = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"])
     file = None
@@ -124,14 +140,14 @@ def upload_file(user, folderId):
             filename = file.filename
             userObject = Account.query.filter(Account.email == user).first()
             folderObject = Folder.query.filter(Folder.id == folderId).first()
-            print(folderObject.name, folderObject.id)
             dirPath = os.path.join(uploads, folderObject.path)
             if not os.path.exists(dirPath):
                 os.makedirs(dirPath)
             fullPath = os.path.join(dirPath, filename)
             appPath = os.path.join(folderObject.path, filename)
             file.save(fullPath)
-            dbFile = StoredFile(userObject.id, userObject.email, appPath, filename)
+            dbFile = StoredFile(
+                userObject.id, userObject.email, appPath, filename)
             userObject.files.append(dbFile)
             folderObject.files.append(dbFile)
             db.session.add(dbFile)
@@ -179,8 +195,10 @@ def rename_file(user, id):
         storedFile.name = newName
         storedFile.path = newPath
         StoredFile.modified = db.func.current_timestamp()
-        oldFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
-        newFullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], newPath)
+        oldFullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], oldPath)
+        newFullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], newPath)
         os.rename(oldFullPath, newFullPath)
         db.session.add(storedFile)
         db.session.commit()
@@ -196,7 +214,8 @@ def rename_file(user, id):
 @app.route("/api/<user>/shared")
 def list_shared_with_user(user):
     files = (
-        FileShare.query.filter(FileShare.userId == user).join(FileShare.fileItem).all()
+        FileShare.query.filter(FileShare.userId == user).join(
+            FileShare.fileItem).all()
     )
     fileDicts = list(map(lambda f: f.fileItem.toDict(), files))
     return jsonify(fileDicts)
@@ -207,12 +226,12 @@ def create_folder(user):
     try:
         name = request.json["name"]
         path = request.json["path"]
-        print(path)
         if path.startswith("/"):
             path = path[1:]
         if path.endswith("/"):
             path = path[:-1]
-        fullPath = os.path.join(app.root_path, app.config["UPLOAD_FOLDER"], path, name)
+        fullPath = os.path.join(
+            app.root_path, app.config["UPLOAD_FOLDER"], path, name)
         os.makedirs(fullPath)
         appPath = os.path.join(path, name)
         folder = Folder(name, appPath, user)
@@ -229,7 +248,6 @@ def create_folder(user):
         db.session.add(owner)
         db.session.commit()
         db.engine.dispose()
-        print(folder.toDict())
         app.logger.info("Created folder %s.", folder.path)
         return jsonify({"success": True})
     except FileExistsError:

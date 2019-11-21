@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from logging.config import dictConfig
+import os
 
 
 dictConfig(
@@ -29,15 +30,19 @@ dictConfig(
     }
 )
 
-
 app = Flask(__name__)
 CORS(
     app,
     supports_credentials=True,
-    resources={r"/api/*": {"origins": "http://localhost:9000"}},
+    resources={r"/api/*": {"origins": "http://localhost:5000"}},
 )
 
 app.config.from_object("config")
+if (os.environ.get('PRODUCTION') == 'true'):
+    DEBUG = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+    app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER')
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
@@ -62,6 +67,5 @@ try:
     db.session.commit()
     db.engine.dispose()
 except Exception:
-    print("rollback")
     db.session.rollback()
     db.engine.dispose()

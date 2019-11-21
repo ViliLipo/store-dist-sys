@@ -10,6 +10,7 @@ Backend was created using pipenv.
 - `$ pipenv shell`
 - `$ pipenv install`
 - Then to run the app: `$ flask run`
+If the backend run is in this matter you may need to have sqlite3 installed on your OS.
 
 ## Frontend
 Frontend is mainly based on React and other web technologies (i.e., webpack,
@@ -18,3 +19,14 @@ babel, etc.).
 * `$ cd frontend`
 * `$ yarn install`
 * `$ yarn start`
+
+## Running the full system with Docker.
+- Install Docker and Docker-compose
+- `$ cd frontend`
+- `$ yarn deploy`
+- `$ cd ../backend`
+- `$ sudo docker-compose build`
+- There is a slight chance that this will fail to for a reason unrelated to our configuration
+  in that case just run again. In testing this never failed twice in succession.
+- `$ sudo docker-compose up`
+- Connect via localhost:5000

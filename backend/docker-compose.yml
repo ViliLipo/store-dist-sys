@@ -1,0 +1,23 @@
+version: '3.5'
+
+services:
+  spa:
+    build: ./
+    ports:
+      - 5000:5000
+    depends_on:
+      - 'db'
+    environment:
+      DOCKER: 'true'
+      PRODUCTION: 'true'
+      SECRET_KEY: 'secretKey123'
+      UPLOAD_FOLDER: '/server/uploads'
+      DATABASE_URI: 'postgres://distsys:password@db:5432'
+
+  db:
+    image: 'postgres'
+    ports:
+      - 8001:5432
+    environment:
+      POSTGRES_PASSWORD: 'password'
+      POSTGRES_USER: 'distsys'
