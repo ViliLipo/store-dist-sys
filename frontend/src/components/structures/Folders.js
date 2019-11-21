@@ -2,6 +2,7 @@ import React from 'react';
 
 import Folder from 'components/structures/Folder';
 
+// A component which renders a list of folders.
 function Folders(props) {
     return (
         <>

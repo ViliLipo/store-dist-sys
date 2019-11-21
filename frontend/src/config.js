@@ -1,3 +1,4 @@
+// Constants
 const url = 'http://localhost:5000';
 
 // Empty headers for upload.

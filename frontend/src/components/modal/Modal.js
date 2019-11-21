@@ -2,6 +2,7 @@ import React from 'react';
 
 import CreateFolderForm from 'components/forms/CreateFolderForm';
 
+// A component fo displaying a form (e.g., CreateFolderForm).
 function Modal(props) {
     const MODAL_TYPE = {
         createFolder: CreateFolderForm,
@@ -21,7 +22,9 @@ function Modal(props) {
             {isOpen !== 0 && (
                 <div>
                     <TypeModal onSubmit={properties.submitModal} />
-                    <button className="button" onClick={closeModal}>Hide</button>
+                    <button className="button" onClick={closeModal}>
+                        Hide
+                    </button>
                 </div>
             )}
         </div>

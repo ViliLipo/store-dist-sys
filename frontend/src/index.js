@@ -10,13 +10,16 @@ import App from './components/App';
 
 import './skeleton.css';
 
+// Prevents mutability of the state.
 const immutable = [require('redux-immutable-state-invariant').default()];
 
+// An object containing the whole state of the application.
 const store = createStore(
     reducers,
     composeWithDevTools(applyMiddleware(...immutable)),
 );
 
+// Starting point of the system.
 ReactDOM.render(
     <Provider store={store}>
         <Router>

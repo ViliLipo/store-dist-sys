@@ -19,6 +19,8 @@ import {
     setCurrentId,
 } from 'core/redux/actions';
 
+// Component containing global Notification and Modal components.
+// It also holds the possible system routes.
 function App(props) {
     return (
         <>

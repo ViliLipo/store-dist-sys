@@ -1,5 +1,7 @@
 import {url, empty, regular} from './config';
 
+// An module containing API requests to the backend.
+
 // Generic function for making API requests
 const request = (
     query,
