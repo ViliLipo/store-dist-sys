@@ -18,3 +18,12 @@ babel, etc.).
 * `$ cd frontend`
 * `$ yarn install`
 * `$ yarn start`
+
+## Running the full system in Docker.
+- Install Docker and Docker-compose
+- `$ cd frontend`
+- `$ yarn deploy`
+- `$ cd ../backend`
+- `$ sudo docker-compose build`
+- `$ sudo docker-compose up`
+- Connect via localhost:5000
