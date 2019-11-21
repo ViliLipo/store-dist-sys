@@ -52,6 +52,8 @@ function HomePage(props) {
                     props.showNotification(response.message);
                 }
             });
+
+        props.closeModal();
     };
 
     return (
