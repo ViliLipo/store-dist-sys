@@ -94,7 +94,7 @@ class StoredFile(db.Model):
         default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp(),
     )
-    sha1_hash = db.Column(db.Integer)
+    sha1_hash = db.Column(db.String(200))
 
     def __init__(self, ownerId, ownerEmail, path, name):
         self.ownerId = ownerId

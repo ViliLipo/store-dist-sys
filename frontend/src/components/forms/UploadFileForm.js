@@ -1,5 +1,7 @@
 import React from 'react';
 import {reduxForm, Field} from 'redux-form';
+import FontAwesomeIcon from 'react-fontawesome';
+import {required} from 'core/utils/validations';
 
 const handleChange = handler => ({target: {files}}) =>
     handler(files.length && files[0]);
@@ -21,8 +23,13 @@ const FileInput = ({
 function UploadFileForm(props) {
     return (
         <form encType="multipart/form-data" onSubmit={props.handleSubmit}>
-            <Field type="file" name="file" component={FileInput} />
-            <button>Upload</button>
+            <Field
+                type="file"
+                name="file"
+                component={FileInput}
+                validate={required}
+            />
+            <button className="button button-primary"><FontAwesomeIcon name="upload"/> Upload</button>
         </form>
     );
 }

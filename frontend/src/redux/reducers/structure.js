@@ -1,20 +1,18 @@
-import {ADD_USERNAME, REMOVE_USERNAME} from './../actionTypes';
+import {SET_STRUCTURE} from './../actionTypes';
 
 const initialState = {
-    username: null,
+    files: [],
+    name: 'home',
+    parentFolder: null,
+    subfolders: [],
 };
 
 export default function(state = initialState, action) {
     switch (action.type) {
-        case ADD_USERNAME: {
+        case SET_STRUCTURE: {
             return {
                 ...state,
                 ...action.payload,
-            };
-        }
-        case REMOVE_USERNAME: {
-            return {
-                ...initialState,
             };
         }
         default:
